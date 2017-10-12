@@ -1,0 +1,29 @@
+lrcat extractor
+===============
+
+
+Extract the data from Adobe Lightroom catalogs (currently version 4)
+in order to facilitate importing it into another application.
+
+This is written in Rust.
+
+Requires:
+-Rust (1.5)
+-cargo to build
+
+Building
+--------
+
+$ cargo build
+
+License
+-------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+See the LICENSE file in this repository.
+
+Maintainer:
+Hubert Figuière <hub@figuiere.net>
