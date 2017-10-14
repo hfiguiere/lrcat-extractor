@@ -34,11 +34,11 @@ impl FromDb for Keyword {
         })
     }
 
-    fn get_tables() -> &'static str {
+    fn read_db_tables() -> &'static str {
         return "AgLibraryKeyword";
     }
 
-    fn get_columns() -> &'static str {
+    fn read_db_columns() -> &'static str {
         return "id_local,id_global,cast(dateCreated as text),name,parent";
     }
 }

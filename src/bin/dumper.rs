@@ -4,7 +4,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::{Catalog,Keyword,LrObject};
+use lrcat::{Catalog,Folders,Keyword,LrObject};
 
 use docopt::Docopt;
 
@@ -68,22 +68,52 @@ fn process_dump(args: &Args) {
                  catalog.catalog_version);
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
-        let keywords = catalog.load_keywords();
-        println!("\tKeywords count: {}", keywords.len());
+        {
+            let keywords = catalog.load_keywords();
+            println!("\tKeywords count: {}", keywords.len());
 
-        if args.flag_keywords {
-            dump_keywords(&keywords);
+            if args.flag_all || args.flag_keywords {
+                dump_keywords(&keywords);
+            }
+        }
+
+        {
+            let folders = catalog.load_folders();
+            if args.flag_all || args.flag_folders {
+                dump_folders(&folders);
+            }
         }
     }
 }
 
 fn dump_keywords(keywords: &Vec<Keyword>) {
     println!("Keywords");
-    println!("+--------+--------------------------------------+--------+----------------------------+");
+    println!("+--------+--------------------------------------+--------+----------------------------");
+    println!("+ id     + uuid                                 + parent + name");
+    println!("+--------+--------------------------------------+--------+----------------------------");
     for keyword in keywords {
-        println!("+ {:>6} + {} + {:>6} + {:<26} +", keyword.id(), keyword.uuid(), keyword.parent, keyword.name);
+        println!("+ {:>6} + {} + {:>6} + {:<26}", keyword.id(), keyword.uuid(), keyword.parent, keyword.name);
     }
-    println!("+--------+--------------------------------------+--------+----------------------------+");
+    println!("+--------+--------------------------------------+--------+----------------------------");
+}
+
+fn dump_folders(folders: &Folders) {
+    println!("Root Folders");
+    println!("+--------+--------------------------------------+------------------+----------------------------");
+    println!(" id      + uuid                                 + name             + absolute path");
+    println!("+--------+--------------------------------------+------------------+----------------------------");
+    for root in &folders.roots {
+        println!("+ {:>6} + {} + {:<16} + {:<26}", root.id(), root.uuid(), root.name, root.absolute_path);
+    }
+    println!("+--------+--------------------------------------+------------------+----------------------------");
+    println!("Folders");
+    println!("+--------+--------------------------------------+--------+----------------------------");
+    println!("+ id     + uuid                                 + root   + path");
+    println!("+--------+--------------------------------------+--------+----------------------------");
+    for folder in &folders.folders {
+        println!("+ {:>6} + {} + {:>6} + {:<26}", folder.id(), folder.uuid(), folder.root_folder, folder.path_from_root);
+    }
+    println!("+--------+--------------------------------------+--------+----------------------------");
 }
 
 fn process_audit(_: &Args) {
