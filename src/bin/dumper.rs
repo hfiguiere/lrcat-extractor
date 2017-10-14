@@ -4,7 +4,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::Catalog;
+use lrcat::{Catalog,Keyword,LrObject};
 
 use docopt::Docopt;
 
@@ -67,9 +67,25 @@ fn process_dump(args: &Args) {
         println!("\tVersion: {} ({:?})", catalog.version,
                  catalog.catalog_version);
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
+
+        let keywords = catalog.load_keywords();
+        println!("\tKeywords count: {}", keywords.len());
+
+        if args.flag_keywords {
+            dump_keywords(&keywords);
+        }
     }
 }
 
-fn process_audit(args: &Args) {
+fn dump_keywords(keywords: &Vec<Keyword>) {
+    println!("Keywords");
+    println!("+--------+--------------------------------------+--------+----------------------------+");
+    for keyword in keywords {
+        println!("+ {:>6} + {} + {:>6} + {:<26} +", keyword.id(), keyword.uuid(), keyword.parent, keyword.name);
+    }
+    println!("+--------+--------------------------------------+--------+----------------------------+");
+}
+
+fn process_audit(_: &Args) {
 
 }

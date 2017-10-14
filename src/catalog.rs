@@ -2,6 +2,7 @@
 use rusqlite::Connection;
 use rusqlite;
 
+use fromdb::FromDb;
 use keyword::Keyword;
 
 
@@ -42,7 +43,6 @@ impl Catalog {
     pub fn open(&mut self) -> bool {
         let conn_attempt = Connection::open(&self.path);
         if let Ok(conn) = conn_attempt {
-
             self.dbconn = Some(conn);
 
             return true;
@@ -77,5 +77,24 @@ impl Catalog {
             self.get_variable::<f64>("AgLibraryKeyword_rootTagID") {
                 self.root_keyword_id = root_keyword_id;
             }
+    }
+
+    pub fn load_keywords(&mut self) -> &Vec<Keyword> {
+        if self.keywords.is_empty() {
+            if let Some(ref conn) = self.dbconn {
+                let query = format!("SELECT {} FROM {}",
+                                    Keyword::get_columns(),
+                                    Keyword::get_tables());
+                if let Ok(mut stmt) = conn.prepare(&query) {
+                    let mut rows = stmt.query(&[]).unwrap();
+                    while let Some(Ok(row)) = rows.next() {
+                        if let Some(keyword) = Keyword::read_from(&row) {
+                            self.keywords.push(keyword);
+                        }
+                    }
+                }
+            }
+        }
+        return &self.keywords;
     }
 }

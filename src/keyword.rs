@@ -1,14 +1,47 @@
 
-use chrono::{DateTime,Utc};
+use rusqlite::Row;
+
+use fromdb::FromDb;
+use lrobject::LrObject;
 
 pub struct Keyword {
     id: i64,
     uuid: String,
-    date_created: DateTime<Utc>,
-    name: String,
-    parent: i64
+//  date_created: DateTime<Utc>,
+    pub name: String,
+    pub parent: i64
 }
 
+impl LrObject for Keyword {
+    fn id(&self) -> i64 {
+        self.id
+    }
+    fn uuid(&self) -> &str {
+        &self.uuid
+    }
+}
+
+impl FromDb for Keyword {
+
+    fn read_from(row: &Row) -> Option<Self> {
+        let name = row.get_checked(3);
+        let parent = row.get_checked(4);
+        Some(Keyword {
+            id: row.get(0),
+            uuid: row.get(1),
+            name: name.unwrap_or(String::from("")),
+            parent: parent.unwrap_or(0),
+        })
+    }
+
+    fn get_tables() -> &'static str {
+        return "AgLibraryKeyword";
+    }
+
+    fn get_columns() -> &'static str {
+        return "id_local,id_global,cast(dateCreated as text),name,parent";
+    }
+}
 
 impl Keyword {
 
