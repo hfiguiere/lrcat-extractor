@@ -4,6 +4,7 @@ use rusqlite;
 
 use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
+use images::Image;
 use keyword::Keyword;
 
 
@@ -25,6 +26,7 @@ pub struct Catalog {
 
     keywords: Vec<Keyword>,
     folders: Folders,
+    images: Vec<Image>,
 
     dbconn: Option<Connection>,
 }
@@ -39,6 +41,7 @@ impl Catalog {
             root_keyword_id: 0.0,
             keywords: vec!(),
             folders: Folders::new(),
+            images: vec!(),
             dbconn: None
         }
     }
@@ -118,5 +121,15 @@ impl Catalog {
             }
         }
         return &self.folders;
+    }
+
+    pub fn load_images(&mut self) -> &Vec<Image> {
+        if self.images.is_empty() {
+            if let Some(ref conn) = self.dbconn {
+                let mut result = Catalog::load_objects::<Image>(&conn);
+                self.images.append(&mut result);
+            }
+        }
+        return &self.images;
     }
 }

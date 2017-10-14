@@ -4,7 +4,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::{Catalog,Folders,Keyword,LrObject};
+use lrcat::{Catalog,Folders,Image,Keyword,LrObject};
 
 use docopt::Docopt;
 
@@ -83,6 +83,13 @@ fn process_dump(args: &Args) {
                 dump_folders(&folders);
             }
         }
+
+        {
+            let images = catalog.load_images();
+            if args.flag_all || args.flag_images {
+                dump_images(&images);
+            }
+        }
     }
 }
 
@@ -114,6 +121,18 @@ fn dump_folders(folders: &Folders) {
         println!("+ {:>6} + {} + {:>6} + {:<26}", folder.id(), folder.uuid(), folder.root_folder, folder.path_from_root);
     }
     println!("+--------+--------------------------------------+--------+----------------------------");
+}
+
+fn dump_images(images: &Vec<Image>) {
+    println!("Images");
+    println!("+--------+--------------------------------------+--------+--------+----+---+");
+    println!(" id      + uuid                                 + root   + format + or + P +");
+    println!("+--------+--------------------------------------+--------+--------+----+---+");
+    for image in images {
+        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<2} + {} +", image.id(), image.uuid(), image.root_file, image.file_format, image.orientation, image.pick);
+    }
+    println!("+--------+--------------------------------------+--------+--------+----+---+");
+
 }
 
 fn process_audit(_: &Args) {

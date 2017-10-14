@@ -40,3 +40,17 @@ AgLibraryKeyword: keyword definitions.
 * name: the tag nane
 * parent: the parent (local_id)
 
+## Images
+
+Adobe_Images: image. This doesn't represent physical files.
+
+* id_local: local id
+* id_global: uuid
+* fileFormat: string representing the format. Possible values: RAW,
+* pick: not 0 (1?) if picked.
+* rating: rating value or NULL
+* rootFile: the id of the physical file (in `AgLibraryFile`)
+* orientation: text marking the orientation. ex. AB, DA
+* captureTime: date capture time (likely from Exif originally)
+* masterImage: id of master if this is a copy. NULL otherwise.
+* copyName: the name of the virtual copy. masterImage not NULL.
