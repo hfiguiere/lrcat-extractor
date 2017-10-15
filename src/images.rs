@@ -14,7 +14,7 @@ pub struct Image {
     pub file_format: String,
     pub pick: i64,
     pub orientation: String,
-    pub captureTime: String,
+    pub capture_time: String,
 }
 
 impl LrObject for Image {
@@ -37,7 +37,7 @@ impl FromDb for Image {
             file_format: row.get(5),
             pick: row.get(6),
             orientation: row.get(7),
-            captureTime: row.get(8),
+            capture_time: row.get(8),
             copy_name: row.get_checked(9).ok(),
         })
     }
