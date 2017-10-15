@@ -9,8 +9,8 @@ use keyword::Keyword;
 use libraryfile::LibraryFile;
 
 
-const LR3_VERSION: &str = "0300025";
-const LR4_VERSION: &str = "0400020";
+const LR3_VERSION: i32 = 3;
+const LR4_VERSION: i32 = 4;
 
 /// Catalog version.
 #[derive(Debug,PartialEq)]
@@ -76,10 +76,20 @@ impl Catalog {
         None
     }
 
+    fn parse_version(mut v: String) -> i32 {
+        v.truncate(2);
+        if let Ok(version) = v.parse::<i32>() {
+            version
+        } else {
+            0
+        }
+    }
+
     pub fn load_version(&mut self) {
         if let Some(version) = self.get_variable::<String>("Adobe_DBVersion") {
             self.version = version;
-            self.catalog_version = match self.version.as_str() {
+            let v = Catalog::parse_version(self.version.clone());
+            self.catalog_version = match v {
                 LR4_VERSION =>
                     CatalogVersion::Lr4,
                 LR3_VERSION =>
