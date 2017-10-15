@@ -58,3 +58,17 @@ Adobe_Images: image. This doesn't represent physical files.
 * captureTime: date capture time (likely from Exif originally)
 * masterImage: id of master if this is a copy. NULL otherwise.
 * copyName: the name of the virtual copy. masterImage not NULL.
+
+AgLibraryFile: physical files.
+
+* id_local: local id
+* id_global: uuid
+* baseName: name without extension
+* extension: extension
+* idx_filename: index entry
+* importHash: hash at import time
+* md5: md5 digest
+* originalFilename: filename before renaming at import time
+* sidecarExtensions: extensions of sidecars. Comma separated strings.
+   JPG,xmp => when RAW + JPEG with xmp sidecar.
+   Can be empty

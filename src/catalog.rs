@@ -6,6 +6,7 @@ use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
 use images::Image;
 use keyword::Keyword;
+use libraryfile::LibraryFile;
 
 
 const LR3_VERSION: &str = "0300025";
@@ -29,6 +30,7 @@ pub struct Catalog {
     keywords: Vec<Keyword>,
     folders: Folders,
     images: Vec<Image>,
+    libfiles: Vec<LibraryFile>,
 
     dbconn: Option<Connection>,
 }
@@ -44,6 +46,7 @@ impl Catalog {
             keywords: vec!(),
             folders: Folders::new(),
             images: vec!(),
+            libfiles: vec!(),
             dbconn: None
         }
     }
@@ -128,6 +131,16 @@ impl Catalog {
             }
         }
         return &self.folders;
+    }
+
+    pub fn load_library_files(&mut self) -> &Vec<LibraryFile> {
+        if self.libfiles.is_empty() {
+            if let Some(ref conn) = self.dbconn {
+                let mut result = Catalog::load_objects::<LibraryFile>(&conn);
+                self.libfiles.append(&mut result);
+            }
+        }
+        return &self.libfiles;
     }
 
     pub fn load_images(&mut self) -> &Vec<Image> {

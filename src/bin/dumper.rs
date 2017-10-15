@@ -4,17 +4,18 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::{Catalog,CatalogVersion,Folders,Image,Keyword,LrObject};
+use lrcat::{Catalog,CatalogVersion,Folders,Image,Keyword,LibraryFile,LrObject};
 
 use docopt::Docopt;
 
 const USAGE: &'static str = "
 Usage:
-  dumper <command> ([--all] | [--collections] [--images] [--folders] [--keywords]) <path>
+  dumper <command> ([--all] | [--collections] [--libfiles] [--images] [--folders] [--keywords]) <path>
 
 Options:
     --all          Select all objects
     --collections  Select only collections
+    --libfiles     Select only library files
     --images       Select only images
     --folders      Select only folders
     --keywords     Select only keywords
@@ -30,6 +31,7 @@ struct Args {
     arg_path: String,
     flag_all: bool,
     flag_collections: bool,
+    flag_libfiles: bool,
     flag_images: bool,
     flag_folders: bool,
     flag_keywords: bool
@@ -89,6 +91,12 @@ fn process_dump(args: &Args) {
         }
 
         {
+            let libfiles = catalog.load_library_files();
+            if args.flag_all || args.flag_libfiles {
+                dump_libfiles(&libfiles);
+            }
+        }
+        {
             let images = catalog.load_images();
             if args.flag_all || args.flag_images {
                 dump_images(&images);
@@ -125,6 +133,17 @@ fn dump_folders(folders: &Folders) {
         println!("+ {:>6} + {} + {:>6} + {:<26}", folder.id(), folder.uuid(), folder.root_folder, folder.path_from_root);
     }
     println!("+--------+--------------------------------------+--------+----------------------------");
+}
+
+fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
+    println!("Images");
+    println!("+--------+--------------------------------------+--------+--------+------------------+----------+");
+    println!(" id      + uuid                                 + folder + extens + basename         + sidecars +");
+    println!("+--------+--------------------------------------+--------+--------+------------------+----------+");
+    for libfile in libfiles {
+        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<16} + {:<8} +", libfile.id(), libfile.uuid(), libfile.folder, libfile.extension, libfile.basename, libfile.sidecar_extensions);
+    }
+    println!("+--------+--------------------------------------+--------+--------+------------------+----------+");
 }
 
 fn dump_images(images: &Vec<Image>) {
