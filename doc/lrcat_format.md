@@ -1,6 +1,8 @@
 The Lightroom catalog is in a sqlite database: file *.lrcat.
 
 
+This document is for Lightroom 4.
+
 Tables
 ------
 
@@ -25,7 +27,9 @@ Adobe_variablesTable
 This table contain settings for Lightroom. Most of it is irrelevant.
 A few exceptions:
 
-* Adobe_DBVersion: 0400020 (for Lightroom 4.4.1)
+* Adobe_DBVersion:
+    0300025 for Lightroom 3
+    0400020 for Lightroom 4.4.1
 * AgLibraryKeyword_rootTagID: the root keyword local_id (int as string)
 
 ## Keywords

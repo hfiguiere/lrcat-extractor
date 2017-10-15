@@ -10,7 +10,7 @@ pub mod keyword;
 pub mod lrobject;
 
 
-pub use catalog::Catalog;
+pub use catalog::{Catalog,CatalogVersion};
 pub use folders::{Folder,Folders,RootFolder};
 pub use images::Image;
 pub use keyword::Keyword;

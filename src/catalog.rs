@@ -8,12 +8,14 @@ use images::Image;
 use keyword::Keyword;
 
 
+const LR3_VERSION: &str = "0300025";
 const LR4_VERSION: &str = "0400020";
 
 /// Catalog version.
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub enum CatalogVersion {
     Unknown,
+    Lr3,
     Lr4
 }
 
@@ -74,9 +76,14 @@ impl Catalog {
     pub fn load_version(&mut self) {
         if let Some(version) = self.get_variable::<String>("Adobe_DBVersion") {
             self.version = version;
-            if self.version == LR4_VERSION {
-                self.catalog_version = CatalogVersion::Lr4;
-            }
+            self.catalog_version = match self.version.as_str() {
+                LR4_VERSION =>
+                    CatalogVersion::Lr4,
+                LR3_VERSION =>
+                    CatalogVersion::Lr3,
+                _ =>
+                    CatalogVersion::Unknown
+            };
         }
 
         if let Some(root_keyword_id) =

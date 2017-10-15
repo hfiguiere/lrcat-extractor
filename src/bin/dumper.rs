@@ -4,7 +4,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::{Catalog,Folders,Image,Keyword,LrObject};
+use lrcat::{Catalog,CatalogVersion,Folders,Image,Keyword,LrObject};
 
 use docopt::Docopt;
 
@@ -68,6 +68,10 @@ fn process_dump(args: &Args) {
                  catalog.catalog_version);
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
+        if catalog.catalog_version != CatalogVersion::Lr4 {
+            println!("Unsupported catalog version");
+            return;
+        }
         {
             let keywords = catalog.load_keywords();
             println!("\tKeywords count: {}", keywords.len());
