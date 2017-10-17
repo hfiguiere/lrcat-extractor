@@ -1,18 +1,16 @@
 
-use rusqlite::Row;
+use rusqlite::{Row,Connection};
 
+use content::Content;
 use fromdb::FromDb;
 use lrobject::LrObject;
-
-pub trait LrFolder : LrObject {
-
-}
 
 pub struct Folder {
     id: i64,
     uuid: String,
     pub path_from_root: String,
     pub root_folder: i64,
+    pub content: Option<Content>,
 }
 
 impl LrObject for Folder {
@@ -31,6 +29,7 @@ impl FromDb for Folder {
             uuid: row.get(1),
             path_from_root: row.get(2),
             root_folder: row.get(3),
+            content: None,
         })
     }
     fn read_db_tables() -> &'static str {
@@ -38,6 +37,12 @@ impl FromDb for Folder {
     }
     fn read_db_columns() -> &'static str {
         "id_local,id_global,pathFromRoot,rootFolder"
+    }
+}
+
+impl Folder {
+    pub fn read_content(&self, conn: &Connection) -> Content {
+        Content::from_db(conn, "AgFolderContent", "containingFolder", self.id)
     }
 }
 

@@ -67,6 +67,26 @@ AgLibraryFolder: folder. Attached to a root folder.
 There is always a folder with an empty `pathFromRoot` for a root
 folder (does this mean an AgLibraryFile is attached to only folders?)
 
+## Content
+
+Collections and folder have a "content" defined to declare what's inside. They is a per containe type table.
+
+This is done by defining key/values of properties. `owningValue` is
+the key. `content` is a value.
+
+common columns:
+* id_local: local id
+* owningModule: the key.
+* content: value of the property
+
+AgFolderContent:
+* id_global: uuid
+* containingFolder: the folder this content applies to
+* name: ????
+
+AgLibraryContent:
+* collection: the collection this content applies to.
+
 ## Images
 
 Adobe_Images: image. This doesn't represent physical files.

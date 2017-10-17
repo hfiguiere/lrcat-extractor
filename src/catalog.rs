@@ -136,7 +136,10 @@ impl Catalog {
             if let Some(ref conn) = self.dbconn {
                 let folders = Catalog::load_objects::<RootFolder>(&conn);
                 self.folders.append_root_folders(folders);
-                let folders = Catalog::load_objects::<Folder>(&conn);
+                let mut folders = Catalog::load_objects::<Folder>(&conn);
+                for ref mut folder in &mut folders {
+                    folder.content = Some(folder.read_content(conn));
+                }
                 self.folders.append_folders(folders);
             }
         }

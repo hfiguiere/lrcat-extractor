@@ -130,7 +130,9 @@ fn dump_folders(folders: &Folders) {
     println!("+ id     + uuid                                 + root   + path");
     println!("+--------+--------------------------------------+--------+----------------------------");
     for folder in &folders.folders {
-        println!("+ {:>6} + {} + {:>6} + {:<26}", folder.id(), folder.uuid(), folder.root_folder, folder.path_from_root);
+        println!("+ {:>6} + {} + {:>6} + {:<26} + {:?}",
+                 folder.id(), folder.uuid(), folder.root_folder,
+                 folder.path_from_root, folder.content);
     }
     println!("+--------+--------------------------------------+--------+----------------------------");
 }
@@ -141,7 +143,10 @@ fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
     println!(" id      + uuid                                 + folder + extens + basename         + sidecars +");
     println!("+--------+--------------------------------------+--------+--------+------------------+----------+");
     for libfile in libfiles {
-        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<16} + {:<8} +", libfile.id(), libfile.uuid(), libfile.folder, libfile.extension, libfile.basename, libfile.sidecar_extensions);
+        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<16} + {:<8} +",
+                 libfile.id(), libfile.uuid(), libfile.folder,
+                 libfile.extension, libfile.basename,
+                 libfile.sidecar_extensions);
     }
     println!("+--------+--------------------------------------+--------+--------+------------------+----------+");
 }

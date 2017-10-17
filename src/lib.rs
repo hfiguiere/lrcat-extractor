@@ -3,6 +3,7 @@ extern crate chrono;
 extern crate rusqlite;
 
 pub mod catalog;
+pub mod content;
 pub mod folders;
 pub mod fromdb;
 pub mod images;
@@ -12,6 +13,7 @@ pub mod lrobject;
 
 
 pub use catalog::{Catalog,CatalogVersion};
+pub use content::Content;
 pub use folders::{Folder,Folders,RootFolder};
 pub use images::Image;
 pub use keyword::Keyword;
