@@ -46,7 +46,7 @@ pub struct RootFolder {
     uuid: String,
     pub absolute_path: String,
     pub name: String,
-    pub relative_path_from_catalog: String,
+    pub relative_path_from_catalog: Option<String>,
 }
 
 impl LrObject for RootFolder {
@@ -65,7 +65,7 @@ impl FromDb for RootFolder {
             uuid: row.get(1),
             absolute_path: row.get(2),
             name: row.get(3),
-            relative_path_from_catalog: row.get(4),
+            relative_path_from_catalog: row.get_checked(4).ok(),
         })
     }
 

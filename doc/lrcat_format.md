@@ -44,6 +44,29 @@ AgLibraryKeyword: keyword definitions.
 * name: the tag nane
 * parent: the parent (local_id)
 
+## Folders
+
+Two kinds. Root and Folders. Root are top level folders and don't have
+a parent.
+
+AgLibraryRootFolder: root folder.
+
+* id_local: local id
+* id_global: uuid
+* absolutePath: Absolute path to the root folder.
+* name: name of the folder.
+* relativePathFromCatalog: may be NULL if on a different volume.
+
+AgLibraryFolder: folder. Attached to a root folder.
+
+* id_local: local id
+* id_global: uuid
+* pathFromRoot: path from the root folder.
+* rootFolder: id of the root folder.
+
+There is always a folder with an empty `pathFromRoot` for a root
+folder (does this mean an AgLibraryFile is attached to only folders?)
+
 ## Images
 
 Adobe_Images: image. This doesn't represent physical files.
