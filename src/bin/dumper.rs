@@ -152,7 +152,11 @@ fn dump_images(images: &Vec<Image>) {
     println!(" id      + uuid                                 + root   + format + or + P +");
     println!("+--------+--------------------------------------+--------+--------+----+----+");
     for image in images {
-        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<2} + {} +", image.id(), image.uuid(), image.root_file, image.file_format, image.orientation, image.pick);
+        println!("+ {:>6} + {} + {:>6} + {:<6} + {:<2} + {} +",
+                 image.id(), image.uuid(), image.root_file,
+                 image.file_format,
+                 image.orientation.as_ref().unwrap_or(&String::from("")),
+                 image.pick);
     }
     println!("+--------+--------------------------------------+--------+--------+----+----+");
 

@@ -13,7 +13,7 @@ pub struct Image {
     pub root_file: i64,
     pub file_format: String,
     pub pick: i64,
-    pub orientation: String,
+    pub orientation: Option<String>,
     pub capture_time: String,
 }
 
@@ -36,7 +36,7 @@ impl FromDb for Image {
             root_file: row.get(4),
             file_format: row.get(5),
             pick: row.get(6),
-            orientation: row.get(7),
+            orientation: row.get_checked(7).ok(),
             capture_time: row.get(8),
             copy_name: row.get_checked(9).ok(),
         })

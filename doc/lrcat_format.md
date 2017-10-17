@@ -73,11 +73,13 @@ Adobe_Images: image. This doesn't represent physical files.
 
 * id_local: local id
 * id_global: uuid
-* fileFormat: string representing the format. Possible values: RAW,
+* fileFormat: string representing the format.
+              Possible values: RAW, JPG, VIDEO, DNG
 * pick: not 1 if picked, -1 if rejected, 0 if unpicked.
 * rating: rating value or NULL
 * rootFile: the id of the physical file (in `AgLibraryFile`)
-* orientation: text marking the orientation. ex. AB, DA
+* orientation: text marking the orientation. ex. AB, DA. May be NULL
+               for video.
 * captureTime: date capture time (likely from Exif originally)
 * masterImage: id of master if this is a copy. NULL otherwise.
 * copyName: the name of the virtual copy. masterImage not NULL.
