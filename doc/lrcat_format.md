@@ -84,7 +84,7 @@ AgFolderContent:
 * containingFolder: the folder this content applies to
 * name: ????
 
-AgLibraryContent:
+AgLibraryCollectionContent:
 * collection: the collection this content applies to.
 
 ## Images
@@ -117,3 +117,18 @@ AgLibraryFile: physical files.
 * sidecarExtensions: extensions of sidecars. Comma separated strings.
    JPG,xmp => when RAW + JPEG with xmp sidecar.
    Can be empty
+
+## Collections
+
+AgLibraryCollection
+
+* id_local: local id
+* creationId: "type" of collection. Possible values:
+  - com.adobe.ag.library.group
+  - com.adobe.ag.library.collection
+  - com.adobe.ag.library.smart_collection
+* genealogy: the hierarchy
+* imageCount: ???? (NULL)
+* name: String name of the collection
+* parent: NULL is id_local of parent
+* systemOnly: (seems to only apply to the quick collection)

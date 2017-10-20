@@ -2,6 +2,7 @@
 use rusqlite::Connection;
 use rusqlite;
 
+use collection::Collection;
 use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
 use images::Image;
@@ -31,6 +32,7 @@ pub struct Catalog {
     folders: Folders,
     images: Vec<Image>,
     libfiles: Vec<LibraryFile>,
+    collections: Vec<Collection>,
 
     dbconn: Option<Connection>,
 }
@@ -47,6 +49,7 @@ impl Catalog {
             folders: Folders::new(),
             images: vec!(),
             libfiles: vec!(),
+            collections: vec!(),
             dbconn: None
         }
     }
@@ -128,7 +131,7 @@ impl Catalog {
                 self.keywords.append(&mut result);
             }
         }
-        return &self.keywords;
+        &self.keywords
     }
 
     pub fn load_folders(&mut self) -> &Folders {
@@ -143,7 +146,7 @@ impl Catalog {
                 self.folders.append_folders(folders);
             }
         }
-        return &self.folders;
+        &self.folders
     }
 
     pub fn load_library_files(&mut self) -> &Vec<LibraryFile> {
@@ -153,7 +156,7 @@ impl Catalog {
                 self.libfiles.append(&mut result);
             }
         }
-        return &self.libfiles;
+        &self.libfiles
     }
 
     pub fn load_images(&mut self) -> &Vec<Image> {
@@ -163,6 +166,19 @@ impl Catalog {
                 self.images.append(&mut result);
             }
         }
-        return &self.images;
+        &self.images
+    }
+
+    pub fn load_collections(&mut self) -> &Vec<Collection> {
+        if self.collections.is_empty() {
+            if let Some(ref conn) = self.dbconn {
+                let mut collections = Catalog::load_objects::<Collection>(&conn);
+                for ref mut collection in &mut collections {
+                    collection.content = Some(collection.read_content(conn));
+                }
+                self.collections.append(&mut collections);
+            }
+        }
+        &self.collections
     }
 }

@@ -4,7 +4,16 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
-use lrcat::{Catalog,CatalogVersion,Folders,Image,Keyword,LibraryFile,LrObject};
+use lrcat::{
+    Catalog,
+    CatalogVersion,
+    Collection,
+    Folders,
+    Image,
+    Keyword,
+    LibraryFile,
+    LrObject
+};
 
 use docopt::Docopt;
 
@@ -102,6 +111,12 @@ fn process_dump(args: &Args) {
                 dump_images(&images);
             }
         }
+        {
+            let collections = catalog.load_collections();
+            if args.flag_all || args.flag_collections {
+                dump_collections(&collections);
+            }
+        }
     }
 }
 
@@ -164,6 +179,20 @@ fn dump_images(images: &Vec<Image>) {
                  image.pick);
     }
     println!("+--------+--------------------------------------+--------+--------+----+----+");
+
+}
+
+fn dump_collections(collections: &Vec<Collection>) {
+    println!("Collections");
+    println!("+--------+--------------------------------------+--------+------");
+    println!(" id      + name                                 + parent +");
+    println!("+--------+--------------------------------------+--------+------");
+    for collection in collections {
+        println!("+ {:>6} + {:<36} + {:>6} + {}",
+                 collection.id(), collection.name, collection.parent,
+                 collection.system_only)
+    }
+    println!("+--------+--------------------------------------+--------+------");
 
 }
 
