@@ -2,13 +2,12 @@
 use rusqlite::Connection;
 use rusqlite;
 
-use collection::Collection;
+use collections::Collection;
 use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
 use images::Image;
-use keyword::Keyword;
-use libraryfile::LibraryFile;
-
+use keywords::Keyword;
+use libraryfiles::LibraryFile;
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
