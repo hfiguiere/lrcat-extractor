@@ -28,8 +28,11 @@ pub enum CatalogVersion {
 pub struct Catalog {
     /// catalog path
     path: String,
+    /// The version string
     pub version: String,
+    /// The catalog version
     pub catalog_version: CatalogVersion,
+    /// Id for the root (top level) keyword
     pub root_keyword_id: f64,
 
     keywords: Vec<Keyword>,
@@ -43,6 +46,7 @@ pub struct Catalog {
 
 impl Catalog {
 
+    /// Create a new catalog.
     pub fn new(path: &str) -> Catalog {
         Catalog {
             path: String::from(path),
@@ -58,6 +62,8 @@ impl Catalog {
         }
     }
 
+    /// Open catalog. Return false in failure.
+    /// This doesn't check if the content is valid beyond the backing sqlite3.
     pub fn open(&mut self) -> bool {
         let conn_attempt = Connection::open(&self.path);
         if let Ok(conn) = conn_attempt {
@@ -69,7 +75,8 @@ impl Catalog {
         false
     }
 
-    pub fn get_variable<T>(&self, name: &str) -> Option<T>
+    /// Get a variable from the table.
+    fn get_variable<T>(&self, name: &str) -> Option<T>
         where T: rusqlite::types::FromSql {
 
         if let Some(ref conn) = self.dbconn {
@@ -83,6 +90,7 @@ impl Catalog {
         None
     }
 
+    /// Pare the version string from the database.
     fn parse_version(mut v: String) -> i32 {
         v.truncate(2);
         if let Ok(version) = v.parse::<i32>() {
@@ -92,6 +100,7 @@ impl Catalog {
         }
     }
 
+    /// Load version info for the catalog.
     pub fn load_version(&mut self) {
         if let Some(version) = self.get_variable::<String>("Adobe_DBVersion") {
             self.version = version;
@@ -112,7 +121,8 @@ impl Catalog {
             }
     }
 
-    pub fn load_objects<T: FromDb>(conn: &Connection) -> Vec<T> {
+    /// Generic object loader leveraging the FromDb protocol
+    fn load_objects<T: FromDb>(conn: &Connection) -> Vec<T> {
         let mut result: Vec<T> = vec!();
         let query = format!("SELECT {} FROM {}",
                             T::read_db_columns(),
@@ -128,6 +138,7 @@ impl Catalog {
         result
     }
 
+    /// Load keywords.
     pub fn load_keywords(&mut self) -> &Vec<Keyword> {
         if self.keywords.is_empty() {
             if let Some(ref conn) = self.dbconn {
@@ -138,6 +149,7 @@ impl Catalog {
         &self.keywords
     }
 
+    /// Load folders.
     pub fn load_folders(&mut self) -> &Folders {
         if self.folders.is_empty() {
             if let Some(ref conn) = self.dbconn {
@@ -153,6 +165,7 @@ impl Catalog {
         &self.folders
     }
 
+    /// Load library files (that back images)
     pub fn load_library_files(&mut self) -> &Vec<LibraryFile> {
         if self.libfiles.is_empty() {
             if let Some(ref conn) = self.dbconn {
@@ -163,6 +176,7 @@ impl Catalog {
         &self.libfiles
     }
 
+    /// Load images.
     pub fn load_images(&mut self) -> &Vec<Image> {
         if self.images.is_empty() {
             if let Some(ref conn) = self.dbconn {
@@ -173,6 +187,7 @@ impl Catalog {
         &self.images
     }
 
+    /// Load collectons.
     pub fn load_collections(&mut self) -> &Vec<Collection> {
         if self.collections.is_empty() {
             if let Some(ref conn) = self.dbconn {
