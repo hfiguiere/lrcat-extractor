@@ -46,6 +46,10 @@ impl FromDb for Folder {
 }
 
 impl Folder {
+    pub fn new(id: i64, uuid: &str) -> Folder {
+        Folder { id, uuid: String::from(uuid), path_from_root: String::from(""),
+                 root_folder: 0, content: None }
+    }
     pub fn read_content(&self, conn: &Connection) -> Content {
         Content::from_db(conn, "AgFolderContent", "containingFolder", self.id)
     }
@@ -65,6 +69,14 @@ impl LrObject for RootFolder {
     }
     fn uuid(&self) -> &str {
         &self.uuid
+    }
+}
+
+impl RootFolder {
+    pub fn new(id: i64, uuid: &str) -> RootFolder {
+        RootFolder { id, uuid: String::from(uuid),
+                     absolute_path: String::from(""),
+                     name: String::from(""), relative_path_from_catalog: None }
     }
 }
 
@@ -121,4 +133,43 @@ impl Folders {
         self.roots.append(&mut root_folders);
     }
 
+    fn find_root_folder(&self, id: i64) -> Option<&RootFolder> {
+        for root in &self.roots {
+            if root.id() == id {
+                return Some(root);
+            }
+        }
+        None
+    }
+
+    pub fn resolve_folder_path(&self, folder: &Folder) -> Option<String> {
+        if let Some(root_folder) = self.find_root_folder(folder.root_folder) {
+            let mut root_path = root_folder.absolute_path.clone();
+            root_path += &folder.path_from_root;
+            return Some(root_path);
+        }
+        None
+    }
+}
+
+
+#[cfg(test)]
+#[test]
+fn test_resolve_folder_path() {
+    let mut folders = Folders::new();
+
+    let mut rfolder = RootFolder::new(24, "toplevel");
+    rfolder.absolute_path = String::from("/home/hub/Pictures");
+    rfolder.name = String::from("Pictures");
+    folders.add_root_folder(rfolder);
+
+    let mut folder = Folder::new(42, "foobar");
+    folder.root_folder = 24;
+    folder.path_from_root = String::from("/2017/10");
+    folders.add_folder(folder);
+
+    let resolved = folders.resolve_folder_path(&folders.folders[0]);
+    assert!(resolved.is_some());
+    let resolved = resolved.unwrap();
+    assert_eq!(resolved, "/home/hub/Pictures/2017/10");
 }
