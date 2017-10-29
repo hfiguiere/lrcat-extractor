@@ -21,8 +21,9 @@ use lrcat::{
     Collection,
     Folders,
     Image,
-    Keyword,
+    Keyword, KeywordTree,
     LibraryFile,
+    LrId,
     LrObject
 };
 
@@ -93,11 +94,13 @@ fn process_dump(args: &Args) {
             return;
         }
         {
+            let root_keyword_id = catalog.root_keyword_id;
+            let keywordtree = catalog.load_keywords_tree();
             let keywords = catalog.load_keywords();
             println!("\tKeywords count: {}", keywords.len());
 
             if args.flag_all || args.flag_keywords {
-                dump_keywords(&keywords);
+                dump_keywords(root_keyword_id, &keywords, &keywordtree);
             }
         }
 
@@ -129,15 +132,30 @@ fn process_dump(args: &Args) {
     }
 }
 
-fn dump_keywords(keywords: &BTreeMap<i64,Keyword>) {
+fn print_keyword(level: i32, id: LrId, keywords: &BTreeMap<i64,Keyword>, tree: &KeywordTree) {
+    if let Some(keyword) = keywords.get(&id) {
+        let mut indent = String::from("");
+        if level > 0 {
+            for _ in 0..level-1 {
+                indent.push(' ');
+            }
+            indent.push_str("+ ")
+        }
+        println!("| {:>7} | {} | {:>7} | {}{}", keyword.id(), keyword.uuid(),
+                 keyword.parent, indent, keyword.name);
+        let children = tree.children_for(id);
+        for child in children {
+            print_keyword(level + 1, child, keywords, tree);
+        }
+    }
+}
+
+fn dump_keywords(root: LrId, keywords: &BTreeMap<i64,Keyword>, tree: &KeywordTree) {
     println!("Keywords");
     println!("+---------+--------------------------------------+---------+----------------------------");
-    println!("+ id      + uuid                                 + parent  + name");
+    println!("| id      | uuid                                 | parent  | name");
     println!("+---------+--------------------------------------+---------+----------------------------");
-    for (id, keyword) in keywords {
-        assert_eq!(*id, keyword.id());
-        println!("+ {:>7} + {} + {:>7} + {:<26}", id, keyword.uuid(), keyword.parent, keyword.name);
-    }
+    print_keyword(0, root, keywords, tree);
     println!("+---------+--------------------------------------+---------+----------------------------");
 }
 
