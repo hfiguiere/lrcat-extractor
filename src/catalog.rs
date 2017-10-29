@@ -15,7 +15,7 @@ use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
 use images::Image;
 use keywords::Keyword;
-use keywordtree::KeywordTreeNode;
+use keywordtree::KeywordTree;
 use libraryfiles::LibraryFile;
 use lrobject::LrObject;
 
@@ -144,10 +144,10 @@ impl Catalog {
     }
 
     /// Load a keyword tree
-    pub fn load_keywords_tree(&mut self) -> KeywordTreeNode {
+    pub fn load_keywords_tree(&mut self) -> KeywordTree {
         let keywords = self.load_keywords();
 
-        let mut tree = KeywordTreeNode::new();
+        let mut tree = KeywordTree::new();
         tree.add_children(keywords);
 
         tree

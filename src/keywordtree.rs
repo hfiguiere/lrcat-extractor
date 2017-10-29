@@ -11,14 +11,22 @@ use super::lrobject::LrObject;
 
 /// Keyword tree (node)
 /// Operate as a hash multimap
-pub struct KeywordTreeNode {
+pub struct KeywordTree {
     // HashMap. Key is the parent id. Values: the children ids.
     map: HashMap<i64,Vec<i64>>,
 }
 
-impl KeywordTreeNode {
-    pub fn new() -> KeywordTreeNode {
-        KeywordTreeNode { map: HashMap::new() }
+impl KeywordTree {
+    pub fn new() -> KeywordTree {
+        KeywordTree { map: HashMap::new() }
+    }
+
+    /// Get children for keyword with `id`
+    pub fn children_for(&self, id: i64) -> Vec<i64> {
+        if let Some(children) = self.map.get(&id) {
+            return children.clone();
+        }
+        vec!()
     }
 
     fn add_child(&mut self, keyword: &Keyword) {
@@ -44,19 +52,22 @@ impl KeywordTreeNode {
         keywords.insert(4, Keyword::new(4, 0, "", ""));
         keywords.insert(5, Keyword::new(5, 2, "", ""));
 
-        let mut tree_node = KeywordTreeNode::new();
-        tree_node.add_children(&keywords);
+        let mut tree = KeywordTree::new();
+        tree.add_children(&keywords);
 
-        assert_eq!(tree_node.map.len(), 3);
-        assert_eq!(tree_node.map[&0].len(), 2);
-        assert_eq!(tree_node.map[&1].len(), 1);
-        assert_eq!(tree_node.map[&2].len(), 2);
+        assert_eq!(tree.map.len(), 3);
+        assert_eq!(tree.map[&0].len(), 2);
+        assert_eq!(tree.map[&1].len(), 1);
+        assert_eq!(tree.map[&2].len(), 2);
+
+        let children = tree.children_for(0);
+        assert_eq!(children, vec!(1,4));
     }
 }
 
 
 #[cfg(test)]
 #[test]
-fn keyword_tree_node_test() {
-    KeywordTreeNode::test();
+fn keyword_tree_test() {
+    KeywordTree::test();
 }
