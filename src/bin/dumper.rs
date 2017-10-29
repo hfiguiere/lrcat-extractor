@@ -10,6 +10,8 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
+use std::path::PathBuf;
+
 use lrcat::{
     Catalog,
     CatalogVersion,
@@ -43,7 +45,7 @@ Commands are:
 #[derive(Debug, Deserialize)]
 struct Args {
     arg_command: Command,
-    arg_path: String,
+    arg_path: PathBuf,
     flag_all: bool,
     flag_collections: bool,
     flag_libfiles: bool,

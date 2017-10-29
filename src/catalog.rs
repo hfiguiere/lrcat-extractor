@@ -4,6 +4,8 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+use std::path::{PathBuf,Path};
+
 use rusqlite::Connection;
 use rusqlite;
 
@@ -27,7 +29,7 @@ pub enum CatalogVersion {
 
 pub struct Catalog {
     /// catalog path
-    path: String,
+    path: PathBuf,
     /// The version string
     pub version: String,
     /// The catalog version
@@ -47,9 +49,9 @@ pub struct Catalog {
 impl Catalog {
 
     /// Create a new catalog.
-    pub fn new(path: &str) -> Catalog {
+    pub fn new(path: &Path) -> Catalog {
         Catalog {
-            path: String::from(path),
+            path: PathBuf::from(path),
             version: String::from(""),
             catalog_version: CatalogVersion::Unknown,
             root_keyword_id: 0.0,
