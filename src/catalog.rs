@@ -4,6 +4,7 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+use std::collections::BTreeMap;
 use std::path::{PathBuf,Path};
 
 use rusqlite::Connection;
@@ -14,7 +15,9 @@ use folders::{Folders,Folder,RootFolder};
 use fromdb::FromDb;
 use images::Image;
 use keywords::Keyword;
+use keywordtree::KeywordTreeNode;
 use libraryfiles::LibraryFile;
+use lrobject::LrObject;
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
@@ -35,9 +38,9 @@ pub struct Catalog {
     /// The catalog version
     pub catalog_version: CatalogVersion,
     /// Id for the root (top level) keyword
-    pub root_keyword_id: f64,
+    pub root_keyword_id: i64,
 
-    keywords: Vec<Keyword>,
+    keywords: BTreeMap<i64,Keyword>,
     folders: Folders,
     images: Vec<Image>,
     libfiles: Vec<LibraryFile>,
@@ -54,8 +57,8 @@ impl Catalog {
             path: PathBuf::from(path),
             version: String::from(""),
             catalog_version: CatalogVersion::Unknown,
-            root_keyword_id: 0.0,
-            keywords: vec!(),
+            root_keyword_id: 0,
+            keywords: BTreeMap::new(),
             folders: Folders::new(),
             images: vec!(),
             libfiles: vec!(),
@@ -119,7 +122,7 @@ impl Catalog {
 
         if let Some(root_keyword_id) =
             self.get_variable::<f64>("AgLibraryKeyword_rootTagID") {
-                self.root_keyword_id = root_keyword_id;
+                self.root_keyword_id = root_keyword_id.round() as i64;
             }
     }
 
@@ -140,12 +143,24 @@ impl Catalog {
         result
     }
 
+    /// Load a keyword tree
+    pub fn load_keywords_tree(&mut self) -> KeywordTreeNode {
+        let keywords = self.load_keywords();
+
+        let mut tree = KeywordTreeNode::new();
+        tree.add_children(keywords);
+
+        tree
+    }
+
     /// Load keywords.
-    pub fn load_keywords(&mut self) -> &Vec<Keyword> {
+    pub fn load_keywords(&mut self) -> &BTreeMap<i64,Keyword> {
         if self.keywords.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let mut result = Catalog::load_objects::<Keyword>(&conn);
-                self.keywords.append(&mut result);
+                let result = Catalog::load_objects::<Keyword>(&conn);
+                for keyword in result {
+                    self.keywords.insert(keyword.id(), keyword);
+                }
             }
         }
         &self.keywords

@@ -14,6 +14,7 @@ pub mod folders;
 pub mod fromdb;
 pub mod images;
 pub mod keywords;
+pub mod keywordtree;
 pub mod libraryfiles;
 pub mod lrobject;
 

@@ -10,7 +10,10 @@ extern crate serde;
 extern crate serde_derive;
 extern crate docopt;
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
+
+use docopt::Docopt;
 
 use lrcat::{
     Catalog,
@@ -22,8 +25,6 @@ use lrcat::{
     LibraryFile,
     LrObject
 };
-
-use docopt::Docopt;
 
 const USAGE: &'static str = "
 Usage:
@@ -128,15 +129,16 @@ fn process_dump(args: &Args) {
     }
 }
 
-fn dump_keywords(keywords: &Vec<Keyword>) {
+fn dump_keywords(keywords: &BTreeMap<i64,Keyword>) {
     println!("Keywords");
-    println!("+--------+--------------------------------------+--------+----------------------------");
-    println!("+ id     + uuid                                 + parent + name");
-    println!("+--------+--------------------------------------+--------+----------------------------");
-    for keyword in keywords {
-        println!("+ {:>6} + {} + {:>6} + {:<26}", keyword.id(), keyword.uuid(), keyword.parent, keyword.name);
+    println!("+---------+--------------------------------------+---------+----------------------------");
+    println!("+ id      + uuid                                 + parent  + name");
+    println!("+---------+--------------------------------------+---------+----------------------------");
+    for (id, keyword) in keywords {
+        assert_eq!(*id, keyword.id());
+        println!("+ {:>7} + {} + {:>7} + {:<26}", id, keyword.uuid(), keyword.parent, keyword.name);
     }
-    println!("+--------+--------------------------------------+--------+----------------------------");
+    println!("+---------+--------------------------------------+---------+----------------------------");
 }
 
 fn dump_folders(folders: &Folders) {

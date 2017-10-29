@@ -49,5 +49,8 @@ impl FromDb for Keyword {
 }
 
 impl Keyword {
-
+    /// Initialize a new keyword.
+    pub fn new(id: i64, parent: i64, uuid: &str, name: &str) -> Keyword {
+        Keyword { id, parent, uuid: String::from(uuid), name: String::from(name) }
+    }
 }
