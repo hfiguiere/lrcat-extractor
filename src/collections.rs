@@ -8,10 +8,11 @@ use rusqlite::{Connection,Row};
 
 use content::Content;
 use fromdb::FromDb;
+use lrobject::LrId;
 
 /// A collection as defined in Lightroom
 pub struct Collection {
-    id: i64,
+    id: LrId,
     pub name: String,
     pub parent: i64,
     /// is system only (seems to be the quick pick)
@@ -43,7 +44,7 @@ impl FromDb for Collection {
 
 impl Collection {
     /// Return the local_id of the collection.
-    pub fn id(&self) -> i64 {
+    pub fn id(&self) -> LrId {
         self.id
     }
 

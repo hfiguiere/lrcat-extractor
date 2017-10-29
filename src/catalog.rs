@@ -17,7 +17,7 @@ use images::Image;
 use keywords::Keyword;
 use keywordtree::KeywordTree;
 use libraryfiles::LibraryFile;
-use lrobject::LrObject;
+use lrobject::{LrId,LrObject};
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
@@ -38,9 +38,9 @@ pub struct Catalog {
     /// The catalog version
     pub catalog_version: CatalogVersion,
     /// Id for the root (top level) keyword
-    pub root_keyword_id: i64,
+    pub root_keyword_id: LrId,
 
-    keywords: BTreeMap<i64,Keyword>,
+    keywords: BTreeMap<LrId,Keyword>,
     folders: Folders,
     images: Vec<Image>,
     libfiles: Vec<LibraryFile>,
@@ -122,7 +122,7 @@ impl Catalog {
 
         if let Some(root_keyword_id) =
             self.get_variable::<f64>("AgLibraryKeyword_rootTagID") {
-                self.root_keyword_id = root_keyword_id.round() as i64;
+                self.root_keyword_id = root_keyword_id.round() as LrId;
             }
     }
 
@@ -154,7 +154,7 @@ impl Catalog {
     }
 
     /// Load keywords.
-    pub fn load_keywords(&mut self) -> &BTreeMap<i64,Keyword> {
+    pub fn load_keywords(&mut self) -> &BTreeMap<LrId,Keyword> {
         if self.keywords.is_empty() {
             if let Some(ref conn) = self.dbconn {
                 let result = Catalog::load_objects::<Keyword>(&conn);

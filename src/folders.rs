@@ -8,18 +8,18 @@ use rusqlite::{Row,Connection};
 
 use content::Content;
 use fromdb::FromDb;
-use lrobject::LrObject;
+use lrobject::{LrId,LrObject};
 
 pub struct Folder {
-    id: i64,
+    id: LrId,
     uuid: String,
     pub path_from_root: String,
-    pub root_folder: i64,
+    pub root_folder: LrId,
     pub content: Option<Content>,
 }
 
 impl LrObject for Folder {
-    fn id(&self) -> i64 {
+    fn id(&self) -> LrId {
         self.id
     }
     fn uuid(&self) -> &str {
@@ -46,7 +46,7 @@ impl FromDb for Folder {
 }
 
 impl Folder {
-    pub fn new(id: i64, uuid: &str) -> Folder {
+    pub fn new(id: LrId, uuid: &str) -> Folder {
         Folder { id, uuid: String::from(uuid), path_from_root: String::from(""),
                  root_folder: 0, content: None }
     }
@@ -56,7 +56,7 @@ impl Folder {
 }
 
 pub struct RootFolder {
-    id: i64,
+    id: LrId,
     uuid: String,
     pub absolute_path: String,
     pub name: String,
@@ -64,7 +64,7 @@ pub struct RootFolder {
 }
 
 impl LrObject for RootFolder {
-    fn id(&self) -> i64 {
+    fn id(&self) -> LrId {
         self.id
     }
     fn uuid(&self) -> &str {
@@ -73,7 +73,7 @@ impl LrObject for RootFolder {
 }
 
 impl RootFolder {
-    pub fn new(id: i64, uuid: &str) -> RootFolder {
+    pub fn new(id: LrId, uuid: &str) -> RootFolder {
         RootFolder { id, uuid: String::from(uuid),
                      absolute_path: String::from(""),
                      name: String::from(""), relative_path_from_catalog: None }

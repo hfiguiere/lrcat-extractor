@@ -25,8 +25,9 @@ pub use content::Content;
 pub use folders::{Folder,Folders,RootFolder};
 pub use images::Image;
 pub use keywords::Keyword;
+pub use keywordtree::KeywordTree;
 pub use libraryfiles::LibraryFile;
-pub use lrobject::LrObject;
+pub use lrobject::{LrObject,LrId};
 
 #[cfg(test)]
 mod tests {

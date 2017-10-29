@@ -4,7 +4,9 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+pub type LrId = i64;
+
 pub trait LrObject {
-    fn id(&self) -> i64;
+    fn id(&self) -> LrId;
     fn uuid(&self) -> &str;
 }

@@ -7,15 +7,15 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::LrObject;
+use lrobject::{LrId,LrObject};
 
 pub struct Image {
-    id: i64,
+    id: LrId,
     uuid: String,
     pub master_image: Option<i64>,
     pub copy_name: Option<String>,
     pub rating: Option<i64>,
-    pub root_file: i64,
+    pub root_file: LrId,
     pub file_format: String,
     pub pick: i64,
     pub orientation: Option<String>,
@@ -23,7 +23,7 @@ pub struct Image {
 }
 
 impl LrObject for Image {
-    fn id(&self) -> i64 {
+    fn id(&self) -> LrId {
         self.id
     }
     fn uuid(&self) -> &str {

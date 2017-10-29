@@ -7,18 +7,18 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::LrObject;
+use lrobject::{LrId,LrObject};
 
 pub struct Keyword {
-    id: i64,
+    id: LrId,
     uuid: String,
 //  date_created: DateTime<Utc>,
     pub name: String,
-    pub parent: i64
+    pub parent: LrId
 }
 
 impl LrObject for Keyword {
-    fn id(&self) -> i64 {
+    fn id(&self) -> LrId {
         self.id
     }
     fn uuid(&self) -> &str {
@@ -50,7 +50,7 @@ impl FromDb for Keyword {
 
 impl Keyword {
     /// Initialize a new keyword.
-    pub fn new(id: i64, parent: i64, uuid: &str, name: &str) -> Keyword {
+    pub fn new(id: LrId, parent: LrId, uuid: &str, name: &str) -> Keyword {
         Keyword { id, parent, uuid: String::from(uuid), name: String::from(name) }
     }
 }

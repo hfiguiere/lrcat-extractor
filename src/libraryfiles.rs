@@ -7,19 +7,19 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::LrObject;
+use lrobject::{LrId,LrObject};
 
 pub struct LibraryFile {
-    id: i64,
+    id: LrId,
     uuid: String,
     pub basename: String,
     pub extension: String,
-    pub folder: i64,
+    pub folder: LrId,
     pub sidecar_extensions: String,
 }
 
 impl LrObject for LibraryFile {
-    fn id(&self) -> i64 {
+    fn id(&self) -> LrId {
         self.id
     }
     fn uuid(&self) -> &str {
