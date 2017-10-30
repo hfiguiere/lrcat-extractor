@@ -9,16 +9,25 @@ use rusqlite::Row;
 use fromdb::FromDb;
 use lrobject::{LrId,LrObject};
 
+/// An image in the `Catalog`. Requires a `LibraryFile` backing it
 pub struct Image {
     id: LrId,
     uuid: String,
-    pub master_image: Option<i64>,
+    /// If this a copy, id of the `Image` it is a copy of
+    pub master_image: Option<LrId>,
+    /// Name of copy.
     pub copy_name: Option<String>,
+    /// Star rating
     pub rating: Option<i64>,
+    /// Backing `LibraryFile` id.
     pub root_file: LrId,
+    /// File format
     pub file_format: String,
+    /// Pick. -1, 0, 1
     pub pick: i64,
+    /// Orientation
     pub orientation: Option<String>,
+    /// Capture date.
     pub capture_time: String,
 }
 

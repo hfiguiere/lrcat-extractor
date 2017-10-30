@@ -9,12 +9,18 @@ use rusqlite::Row;
 use fromdb::FromDb;
 use lrobject::{LrId,LrObject};
 
+/// Define a backing file in the `Catalog`. `Images` are
+/// connected to one.
 pub struct LibraryFile {
     id: LrId,
     uuid: String,
+    /// Basename (no extension) of the file
     pub basename: String,
+    /// Extension of the file
     pub extension: String,
+    /// `Folder` id containing file
     pub folder: LrId,
+    /// Extensions of the sidecar(s), comma separated.
     pub sidecar_extensions: String,
 }
 

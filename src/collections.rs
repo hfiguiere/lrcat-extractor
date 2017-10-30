@@ -14,7 +14,8 @@ use lrobject::LrId;
 pub struct Collection {
     id: LrId,
     pub name: String,
-    pub parent: i64,
+    /// Parent of the `Collection`
+    pub parent: LrId,
     /// is system only (seems to be the quick pick)
     pub system_only: bool,
     /// content definition of the collection

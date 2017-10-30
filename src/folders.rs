@@ -10,10 +10,14 @@ use content::Content;
 use fromdb::FromDb;
 use lrobject::{LrId,LrObject};
 
+/// A folder define the container for `LibraryFiles`
+/// They are all attached to a `RootFolder`
 pub struct Folder {
     id: LrId,
     uuid: String,
+    /// Path from the `RootFolder`
     pub path_from_root: String,
+    /// Id of the `RootFolder`
     pub root_folder: LrId,
     pub content: Option<Content>,
 }
@@ -55,11 +59,17 @@ impl Folder {
     }
 }
 
+/// Represent the ancestor of `Folder` and map to
+/// an absolute path
 pub struct RootFolder {
     id: LrId,
     uuid: String,
+    /// Absolute path of the `RootFolder`
     pub absolute_path: String,
+    /// (User readable) name of the `RootFolder`
     pub name: String,
+    /// Eventually if it is possible the path is relative
+    /// to the catalog file.
     pub relative_path_from_catalog: Option<String>,
 }
 
@@ -73,6 +83,7 @@ impl LrObject for RootFolder {
 }
 
 impl RootFolder {
+    /// Create a new `RootFolder` with an id and uuid
     pub fn new(id: LrId, uuid: &str) -> RootFolder {
         RootFolder { id, uuid: String::from(uuid),
                      absolute_path: String::from(""),
@@ -101,39 +112,49 @@ impl FromDb for RootFolder {
 
 }
 
+/// Represent the all the folders
 pub struct Folders {
+    /// The `RootFolder` list
     pub roots: Vec<RootFolder>,
+    /// The `Folder` list
     pub folders: Vec<Folder>,
 }
 
 impl Folders {
 
+    /// Create an empty `Folders`
     pub fn new() -> Folders {
         Folders { roots: vec!(),
                   folders: vec!() }
     }
 
+    /// Return `true` is it is empty
     pub fn is_empty(&self) -> bool {
         self.roots.is_empty() && self.folders.is_empty()
     }
 
+    /// Add a `Folder`
     pub fn add_folder(&mut self, folder: Folder) {
         self.folders.push(folder);
     }
 
+    /// Add a `RootFolder`
     pub fn add_root_folder(&mut self, root_folder: RootFolder) {
         self.roots.push(root_folder);
     }
 
+    /// Append a vector of `Folder`
     pub fn append_folders(&mut self, mut folders: Vec<Folder>) {
         self.folders.append(&mut folders);
     }
 
+    /// Append a vector of `RootFolder`
     pub fn append_root_folders(&mut self, mut root_folders: Vec<RootFolder>) {
         self.roots.append(&mut root_folders);
     }
 
-    fn find_root_folder(&self, id: i64) -> Option<&RootFolder> {
+    /// Return the eventual `RootFolder` with the id.
+    fn find_root_folder(&self, id: LrId) -> Option<&RootFolder> {
         for root in &self.roots {
             if root.id() == id {
                 return Some(root);
@@ -142,6 +163,9 @@ impl Folders {
         None
     }
 
+    /// Resolve the folder path by providing an absolute path
+    /// This does not check if the path exist but merely combine
+    /// the `RootFolder` absolute_path and the `Folder` relative path
     pub fn resolve_folder_path(&self, folder: &Folder) -> Option<String> {
         if let Some(root_folder) = self.find_root_folder(folder.root_folder) {
             let mut root_path = root_folder.absolute_path.clone();

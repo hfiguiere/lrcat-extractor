@@ -40,12 +40,18 @@ pub struct Catalog {
     /// Id for the root (top level) keyword
     pub root_keyword_id: LrId,
 
+    /// The keywords, mapped in the local `LrId`
     keywords: BTreeMap<LrId,Keyword>,
+    /// The `Folders` container.
     folders: Folders,
+    /// The `Image` container
     images: Vec<Image>,
+    /// The `LibraryFile` container
     libfiles: Vec<LibraryFile>,
+    /// The `Collection` container
     collections: Vec<Collection>,
 
+    /// The sqlite connectio to the catalog
     dbconn: Option<Connection>,
 }
 
