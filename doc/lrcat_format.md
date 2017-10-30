@@ -69,7 +69,8 @@ folder (does this mean an AgLibraryFile is attached to only folders?)
 
 ## Content
 
-Collections and folder have a "content" defined to declare what's inside. They is a per containe type table.
+Collections and folder have a "content" defined to declare what's
+inside. They is a per containe type table.
 
 This is done by defining key/values of properties. `owningValue` is
 the key. `content` is a value.
@@ -95,12 +96,18 @@ Adobe_Images: image. This doesn't represent physical files.
 * id_global: uuid
 * fileFormat: string representing the format.
               Possible values: RAW, JPG, VIDEO, DNG
-* pick: not 1 if picked, -1 if rejected, 0 if unpicked.
+* pick: (it's a float in the database) not 1 if picked, -1 if rejected, 0 if unpicked.
 * rating: rating value or NULL
 * rootFile: the id of the physical file (in `AgLibraryFile`)
 * orientation: text marking the orientation. ex. AB, DA. May be NULL
                for video.
-* captureTime: date capture time (likely from Exif originally)
+   Mapping to Exif values
+   * AB -> 1
+   * DA -> 8
+   * BC -> 6
+   * CD -> 3
+   * Not sure if the "mirrored" orientation follow the same scheme.
+* captureTime: date capture time (likely from Exif originally or as reajusted in Lr)
 * masterImage: id of master if this is a copy. NULL otherwise.
 * copyName: the name of the virtual copy. masterImage not NULL.
 

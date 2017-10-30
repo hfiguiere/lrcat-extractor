@@ -31,6 +31,27 @@ pub struct Image {
     pub capture_time: String,
 }
 
+impl Image {
+    /// Return the Exif value for the image orientation
+    /// No orientation = 0.
+    /// Error = -1 or unknown value
+    /// Otherwise the Exif value for `orientation`
+    pub fn exif_orientation(&self) -> i32 {
+        match self.orientation {
+            Some(ref s) => {
+                match s.as_ref() {
+                    "AB" => 1,
+                    "DA" => 8,
+                    "BC" => 6,
+                    "CD" => 3,
+                    _ => -1,
+                }
+            },
+            None => 0,
+        }
+    }
+}
+
 impl LrObject for Image {
     fn id(&self) -> LrId {
         self.id
@@ -61,4 +82,28 @@ impl FromDb for Image {
     fn read_db_columns() -> &'static str {
         "id_local,id_global,masterImage,rating,rootFile,fileFormat,cast(pick as integer),orientation,captureTime,copyName"
     }
+}
+
+
+#[cfg(test)]
+#[test]
+fn test_exif_orientation() {
+    let mut image = Image { id: 1, uuid: String::new(),
+                            master_image: None, rating: None, root_file: 2,
+                            file_format: String::from("RAW"), pick: 0, orientation: None,
+                            capture_time: String::new(),
+                            copy_name: None };
+
+    assert_eq!(image.exif_orientation(), 0);
+    image.orientation = Some(String::from("ZZ"));
+    assert_eq!(image.exif_orientation(), -1);
+
+    image.orientation = Some(String::from("AB"));
+    assert_eq!(image.exif_orientation(), 1);
+    image.orientation = Some(String::from("DA"));
+    assert_eq!(image.exif_orientation(), 8);
+    image.orientation = Some(String::from("BC"));
+    assert_eq!(image.exif_orientation(), 6);
+    image.orientation = Some(String::from("CD"));
+    assert_eq!(image.exif_orientation(), 3);
 }
