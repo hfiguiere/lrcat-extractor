@@ -202,17 +202,17 @@ fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
 
 fn dump_images(images: &Vec<Image>) {
     println!("Images");
-    println!("+---------+--------------------------------------+---------+--------+----+----+");
-    println!("| id      | uuid                                 | root    | format | or | P  |");
-    println!("+---------+--------------------------------------+---------+--------+----+----+");
+    println!("+---------+--------------------------------------+---------+--------+--------+----+");
+    println!("| id      | uuid                                 | root    | format | or     | P  |");
+    println!("+---------+--------------------------------------+---------+--------+--------+----+");
     for image in images {
-        println!("| {:>7} | {} | {:>7} | {:<6} | {:<2} | {} |",
+        println!("| {:>7} | {} | {:>7} | {:<6} | {:<2}({}) | {} |",
                  image.id(), image.uuid(), image.root_file,
                  image.file_format,
-                 image.orientation.as_ref().unwrap_or(&String::from("")),
+                 image.orientation.as_ref().unwrap_or(&String::new()), image.exif_orientation(),
                  image.pick);
     }
-    println!("+---------+--------------------------------------+---------+--------+----+----+");
+    println!("+---------+--------------------------------------+---------+--------+--------+----+");
 
 }
 
