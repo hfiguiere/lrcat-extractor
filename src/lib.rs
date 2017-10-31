@@ -28,10 +28,3 @@ pub use keywords::Keyword;
 pub use keywordtree::KeywordTree;
 pub use libraryfiles::LibraryFile;
 pub use lrobject::{LrObject,LrId};
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-    }
-}
