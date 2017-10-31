@@ -10,13 +10,13 @@ use rusqlite::Connection;
 /// Represent the content view. Applies to `Collection` and `Folder`
 pub struct Content {
     /// Filter
-    filter: Option<String>,
+    pub filter: Option<String>,
     /// What to sort on
-    sort_type: Option<String>,
+    pub sort_type: Option<String>,
     /// Which direction to sort
-    sort_direction: Option<String>,
+    pub sort_direction: Option<String>,
     /// Define the smart collection (if any)
-    smart_collection: Option<String>,
+    pub smart_collection: Option<String>,
 }
 
 impl Content {

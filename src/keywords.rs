@@ -9,11 +9,16 @@ use rusqlite::Row;
 use fromdb::FromDb;
 use lrobject::{LrId,LrObject};
 
+/// A Lightroom keyword.
 pub struct Keyword {
+    /// Local id
     id: LrId,
+    /// Global UUID
     uuid: String,
 //  date_created: DateTime<Utc>,
+    /// the actual keyword
     pub name: String,
+    /// The parent. For top-level the value is `Catalog::root_keyword_id`
     pub parent: LrId
 }
 

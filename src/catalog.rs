@@ -25,8 +25,11 @@ const LR4_VERSION: i32 = 4;
 /// Catalog version.
 #[derive(Debug,PartialEq)]
 pub enum CatalogVersion {
+    /// Unknown version
     Unknown,
+    /// Lightroom 3.x catalog. Unhandled.
     Lr3,
+    /// Lightroom 4.x catalog.
     Lr4
 }
 

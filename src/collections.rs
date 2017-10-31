@@ -12,11 +12,13 @@ use lrobject::LrId;
 
 /// A collection as defined in Lightroom
 pub struct Collection {
+    /// Local id of the collection
     id: LrId,
+    /// Name of the collection (displayed in the UI)
     pub name: String,
     /// Parent of the `Collection`
     pub parent: LrId,
-    /// is system only (seems to be the quick pick)
+    /// is system only (seems to be the Quick Pick collection)
     pub system_only: bool,
     /// content definition of the collection
     pub content: Option<Content>,

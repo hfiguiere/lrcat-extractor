@@ -9,8 +9,8 @@ use std::collections::{BTreeMap,HashMap};
 use super::keywords::Keyword;
 use super::lrobject::LrObject;
 
-/// Keyword tree (node)
-/// Operate as a hash multimap
+/// Keyword tree
+/// Operate as a hash multimap of parent -> Vec<child>
 pub struct KeywordTree {
     // HashMap. Key is the parent id. Values: the children ids.
     map: HashMap<i64,Vec<i64>>,
