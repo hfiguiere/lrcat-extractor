@@ -1,7 +1,8 @@
 The Lightroom catalog is in a sqlite database: file *.lrcat.
 
 
-This document is for Lightroom 4 and seems to be valid for Lightroom 6.
+This document is for Lightroom 4 and Lightroom 6.
+Unless mentionned, info applies to both versions.
 
 Tables
 ------
@@ -44,6 +45,12 @@ AgLibraryKeyword: keyword definitions.
 * lc_name: the (localized?) tag name
 * name: the tag nane
 * parent: the parent (local_id)
+
+AgLibraryKeywordImage: keyword relation with images
+
+* id_local: local id
+* image: associated image `Adobe_images`
+* tag: addociated keyword `AgLibraryKeyword`
 
 ## Folders
 
@@ -128,7 +135,7 @@ AgLibraryFile: physical files.
 
 ## Collections
 
-AgLibraryCollection
+AgLibraryCollection - collections definitions
 
 * id_local: local id
 * creationId: "type" of collection. Possible values:
@@ -140,3 +147,45 @@ AgLibraryCollection
 * name: String name of the collection
 * parent: NULL is id_local of parent
 * systemOnly: (seems to only apply to the quick collection)
+
+AgLibraryCollectionImage - image to collection relation
+
+* id_local: local id
+* collection: local id of the collection
+* image: local id of the image
+* pick
+* positionInCollection
+
+AgLibraryCollectionCoverImage (Lr6) - The cover image for collections
+
+* collection: local id for `AgLibraryCollection`
+* collectionImage: local id for `AgLibraryCollectionImage`
+
+## Faces (Lr 6 only)
+
+AgLibraryFace - Define face detected.
+
+* id_local: local id
+* cluster: id of the cluster `AgLibraryFaceCluster`
+* image: id of the image
+
+AgLibraryFaceCluster - Group faces together
+
+* id_local: local id of the cluster.
+* keyFace: (NULL?)
+
+AgLibraryFaceData - Data of each face
+
+* id_local: local id
+* face: local id of the face.
+* data: blob. Apparently JP2.
+
+AgLibraryKeywordFace - Face to keyword equivalence
+
+* id_local: local id
+* face: local id of the face.
+* tag: local id of the keyword tag.
+* userPick: user said yes.
+* userReject: (rejected by user?)
+* keyFace: (NULL?)
+* rankOrder: ?
