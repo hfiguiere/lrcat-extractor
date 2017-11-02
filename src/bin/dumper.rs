@@ -89,10 +89,16 @@ fn process_dump(args: &Args) {
                  catalog.catalog_version);
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
-        if catalog.catalog_version != CatalogVersion::Lr4 {
-            println!("Unsupported catalog version");
-            return;
+        match catalog.catalog_version {
+            CatalogVersion::Lr4 |
+            CatalogVersion::Lr6 => {
+            },
+            _ => {
+                println!("Unsupported catalog version");
+                return;
+            }
         }
+
         {
             let root_keyword_id = catalog.root_keyword_id;
             let keywordtree = catalog.load_keywords_tree();

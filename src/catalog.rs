@@ -21,6 +21,7 @@ use lrobject::{LrId,LrObject};
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
+const LR6_VERSION: i32 = 6;
 
 /// Catalog version.
 #[derive(Debug,PartialEq)]
@@ -30,7 +31,9 @@ pub enum CatalogVersion {
     /// Lightroom 3.x catalog. Unhandled.
     Lr3,
     /// Lightroom 4.x catalog.
-    Lr4
+    Lr4,
+    /// Lightroom 6.x catalog.
+    Lr6,
 }
 
 pub struct Catalog {
@@ -120,6 +123,8 @@ impl Catalog {
             self.version = version;
             let v = Catalog::parse_version(self.version.clone());
             self.catalog_version = match v {
+                LR6_VERSION =>
+                    CatalogVersion::Lr6,
                 LR4_VERSION =>
                     CatalogVersion::Lr4,
                 LR3_VERSION =>
