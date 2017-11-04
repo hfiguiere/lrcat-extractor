@@ -6,6 +6,8 @@
 
 extern crate chrono;
 extern crate rusqlite;
+#[macro_use]
+extern crate try_opt;
 
 pub mod catalog;
 pub mod collections;

@@ -96,12 +96,11 @@ impl Catalog {
     fn get_variable<T>(&self, name: &str) -> Option<T>
         where T: rusqlite::types::FromSql {
 
-        if let Some(ref conn) = self.dbconn {
-            if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
-                let mut rows = stmt.query(&[&name]).unwrap();
-                if let Some(Ok(row)) = rows.next() {
-                    return Some(row.get(0));
-                }
+        let conn = try_opt!(self.dbconn.as_ref());
+        if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
+            let mut rows = stmt.query(&[&name]).unwrap();
+            if let Some(Ok(row)) = rows.next() {
+                return Some(row.get(0));
             }
         }
         None
