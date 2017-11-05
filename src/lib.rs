@@ -9,16 +9,16 @@ extern crate rusqlite;
 #[macro_use]
 extern crate try_opt;
 
-pub mod catalog;
-pub mod collections;
-pub mod content;
-pub mod folders;
-pub mod fromdb;
-pub mod images;
-pub mod keywords;
-pub mod keywordtree;
-pub mod libraryfiles;
-pub mod lrobject;
+mod catalog;
+mod collections;
+mod content;
+mod folders;
+mod fromdb;
+mod images;
+mod keywords;
+mod keywordtree;
+mod libraryfiles;
+mod lrobject;
 
 
 pub use catalog::{Catalog,CatalogVersion};
