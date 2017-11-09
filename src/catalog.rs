@@ -36,6 +36,7 @@ pub enum CatalogVersion {
     Lr6,
 }
 
+/// A Lightroom Catalog.
 pub struct Catalog {
     /// catalog path
     path: PathBuf,

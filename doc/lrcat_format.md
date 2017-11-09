@@ -42,7 +42,11 @@ AgLibraryKeyword: keyword definitions.
 * id_global: uuid
 * dateCreated: creation date timestamp
 * genealogy: the hierarchy
-* lc_name: the (localized?) tag name
+* includeOnExport: whether to include on export
+* includeParents: whether to include parents (on export)
+* includeSynonyms: whether to include synonyms (on export)
+* (Lr6) keywordType: "person" is for tag that are `Faces`.
+* lc_name: the lowercase tag name
 * name: the tag nane
 * parent: the parent (local_id)
 
@@ -133,20 +137,42 @@ AgLibraryFile: physical files.
    JPG,xmp => when RAW + JPEG with xmp sidecar.
    Can be empty
 
+Adobe_AdditionalMetadata: extra metadata for images
+
+* id_local: local id
+* id_global: uuid
+* additionalInfoSet
+* emeddedXmp
+* exeternalXmpIsDirty
+* image: local id of the `Adobe_images`
+* incrementalWhiteBalance
+* internalXmpDigest: (md5 of XMP in DB?)
+* isRawFile: 1 if RAW, or 0.
+* lastSynchronizedHash
+* lastSyncrhonizedTimestamp
+* metadataPresetID: UUID of the metadata preset applied (?)
+* metadataVersion: seems to be 4.0 even in Lr6.
+* monochrome: 1 if monochrome?
+* xmp: the XMP text
+
 ## Collections
 
 AgLibraryCollection - collections definitions
 
 * id_local: local id
-* creationId: "type" of collection. Possible values:
-  - com.adobe.ag.library.group
-  - com.adobe.ag.library.collection
-  - com.adobe.ag.library.smart_collection
+* creationId: "type" of collection. Some of the possible values:
+  - com.adobe.ag.library.group: Group of collection
+  - com.adobe.ag.library.collection: regular collection
+  - com.adobe.ag.library.smart_collection: user collection
+  - com.adobe.ag.webGallery: web gallery
+  - com.adobe.ag.print.unsaved: last print (internal state)
+  - com.adobe.ag.webGallery.unsaved: last web gallery (not saved)
+  - com.adboe.ag.slidshow.unsaved: last slideshow (not saved)
 * genealogy: the hierarchy
 * imageCount: ???? (NULL)
 * name: String name of the collection
 * parent: NULL is id_local of parent
-* systemOnly: (seems to only apply to the quick collection)
+* systemOnly: (seems to apply to the quick collection and *.unsaved)
 
 AgLibraryCollectionImage - image to collection relation
 
