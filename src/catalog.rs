@@ -36,9 +36,10 @@ pub enum CatalogVersion {
     Lr6,
 }
 
-/// A Lightroom Catalog.
+/// Catalog is the main container for Lightroom. It represents
+/// the .lrcat database.
 pub struct Catalog {
-    /// catalog path
+    /// Catalog path
     path: PathBuf,
     /// The version string
     pub version: String,
