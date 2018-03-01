@@ -7,7 +7,7 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::{LrId,LrObject};
+use lrobject::{LrId, LrObject};
 
 /// An image in the `Catalog`. Requires a `LibraryFile` backing it
 pub struct Image {
@@ -38,14 +38,12 @@ impl Image {
     /// Otherwise the Exif value for `orientation`
     pub fn exif_orientation(&self) -> i32 {
         match self.orientation {
-            Some(ref s) => {
-                match s.as_ref() {
-                    "AB" => 1,
-                    "DA" => 8,
-                    "BC" => 6,
-                    "CD" => 3,
-                    _ => -1,
-                }
+            Some(ref s) => match s.as_ref() {
+                "AB" => 1,
+                "DA" => 8,
+                "BC" => 6,
+                "CD" => 3,
+                _ => -1,
             },
             None => 0,
         }
@@ -84,15 +82,21 @@ impl FromDb for Image {
     }
 }
 
-
 #[cfg(test)]
 #[test]
 fn test_exif_orientation() {
-    let mut image = Image { id: 1, uuid: String::new(),
-                            master_image: None, rating: None, root_file: 2,
-                            file_format: String::from("RAW"), pick: 0, orientation: None,
-                            capture_time: String::new(),
-                            copy_name: None };
+    let mut image = Image {
+        id: 1,
+        uuid: String::new(),
+        master_image: None,
+        rating: None,
+        root_file: 2,
+        file_format: String::from("RAW"),
+        pick: 0,
+        orientation: None,
+        capture_time: String::new(),
+        copy_name: None,
+    };
 
     assert_eq!(image.exif_orientation(), 0);
     image.orientation = Some(String::from("ZZ"));

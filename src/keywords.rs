@@ -7,7 +7,7 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::{LrId,LrObject};
+use lrobject::{LrId, LrObject};
 
 /// A Lightroom keyword.
 pub struct Keyword {
@@ -15,11 +15,11 @@ pub struct Keyword {
     id: LrId,
     /// Global UUID
     uuid: String,
-//  date_created: DateTime<Utc>,
+    //  date_created: DateTime<Utc>,
     /// the actual keyword
     pub name: String,
     /// The parent. For top-level the value is `Catalog::root_keyword_id`
-    pub parent: LrId
+    pub parent: LrId,
 }
 
 impl LrObject for Keyword {
@@ -32,7 +32,6 @@ impl LrObject for Keyword {
 }
 
 impl FromDb for Keyword {
-
     fn read_from(row: &Row) -> Option<Self> {
         let name = row.get_checked(3);
         let parent = row.get_checked(4);
@@ -56,6 +55,11 @@ impl FromDb for Keyword {
 impl Keyword {
     /// Initialize a new keyword.
     pub fn new(id: LrId, parent: LrId, uuid: &str, name: &str) -> Keyword {
-        Keyword { id, parent, uuid: String::from(uuid), name: String::from(name) }
+        Keyword {
+            id,
+            parent,
+            uuid: String::from(uuid),
+            name: String::from(name),
+        }
     }
 }

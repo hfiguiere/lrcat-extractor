@@ -4,7 +4,7 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use rusqlite::{Connection,Row};
+use rusqlite::{Connection, Row};
 
 use content::Content;
 use fromdb::FromDb;
@@ -30,9 +30,9 @@ impl FromDb for Collection {
             id: row.get(0),
             name: row.get(2),
             parent: row.get_checked(3).unwrap_or(0),
-            system_only: match row.get::<i32,f64>(4) as i64 {
+            system_only: match row.get::<i32, f64>(4) as i64 {
                 0 => false,
-                _ => true
+                _ => true,
             },
             content: None,
         })
@@ -53,7 +53,6 @@ impl Collection {
 
     /// Read the `content` for this collection from the database.
     pub fn read_content(&self, conn: &Connection) -> Content {
-        Content::from_db(conn, "AgLibraryCollectionContent",
-                         "collection", self.id)
+        Content::from_db(conn, "AgLibraryCollectionContent", "collection", self.id)
     }
 }

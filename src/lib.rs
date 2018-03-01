@@ -20,13 +20,12 @@ mod keywordtree;
 mod libraryfiles;
 mod lrobject;
 
-
-pub use catalog::{Catalog,CatalogVersion};
+pub use catalog::{Catalog, CatalogVersion};
 pub use collections::Collection;
 pub use content::Content;
-pub use folders::{Folder,Folders,RootFolder};
+pub use folders::{Folder, Folders, RootFolder};
 pub use images::Image;
 pub use keywords::Keyword;
 pub use keywordtree::KeywordTree;
 pub use libraryfiles::LibraryFile;
-pub use lrobject::{LrObject,LrId};
+pub use lrobject::{LrId, LrObject};

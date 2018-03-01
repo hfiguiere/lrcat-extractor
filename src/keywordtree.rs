@@ -4,7 +4,7 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use std::collections::{BTreeMap,HashMap};
+use std::collections::{BTreeMap, HashMap};
 
 use super::keywords::Keyword;
 use super::lrobject::LrObject;
@@ -13,12 +13,14 @@ use super::lrobject::LrObject;
 /// Operate as a hash multimap of parent -> Vec<child>
 pub struct KeywordTree {
     // HashMap. Key is the parent id. Values: the children ids.
-    map: HashMap<i64,Vec<i64>>,
+    map: HashMap<i64, Vec<i64>>,
 }
 
 impl KeywordTree {
     pub fn new() -> KeywordTree {
-        KeywordTree { map: HashMap::new() }
+        KeywordTree {
+            map: HashMap::new(),
+        }
     }
 
     /// Get children for keyword with `id`
@@ -26,18 +28,21 @@ impl KeywordTree {
         if let Some(children) = self.map.get(&id) {
             return children.clone();
         }
-        vec!()
+        vec![]
     }
 
     fn add_child(&mut self, keyword: &Keyword) {
         if !self.map.contains_key(&keyword.parent) {
-            self.map.insert(keyword.parent, vec!());
+            self.map.insert(keyword.parent, vec![]);
         }
-        self.map.get_mut(&keyword.parent).unwrap().push(keyword.id());
+        self.map
+            .get_mut(&keyword.parent)
+            .unwrap()
+            .push(keyword.id());
     }
 
     /// Add children to the tree node.
-    pub fn add_children(&mut self, children: &BTreeMap<i64,Keyword>) {
+    pub fn add_children(&mut self, children: &BTreeMap<i64, Keyword>) {
         for (_, child) in children {
             self.add_child(child);
         }
@@ -45,7 +50,7 @@ impl KeywordTree {
 
     #[cfg(test)]
     pub fn test() {
-        let mut keywords : BTreeMap<i64, Keyword> = BTreeMap::new();
+        let mut keywords: BTreeMap<i64, Keyword> = BTreeMap::new();
         keywords.insert(1, Keyword::new(1, 0, "", ""));
         keywords.insert(2, Keyword::new(2, 1, "", ""));
         keywords.insert(3, Keyword::new(3, 2, "", ""));
@@ -61,10 +66,9 @@ impl KeywordTree {
         assert_eq!(tree.map[&2].len(), 2);
 
         let children = tree.children_for(0);
-        assert_eq!(children, vec!(1,4));
+        assert_eq!(children, vec![1, 4]);
     }
 }
-
 
 #[cfg(test)]
 #[test]

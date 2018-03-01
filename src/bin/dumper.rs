@@ -4,28 +4,19 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+extern crate docopt;
 extern crate lrcat;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate docopt;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use docopt::Docopt;
 
-use lrcat::{
-    Catalog,
-    CatalogVersion,
-    Collection,
-    Folders,
-    Image,
-    Keyword, KeywordTree,
-    LibraryFile,
-    LrId,
-    LrObject
-};
+use lrcat::{Catalog, CatalogVersion, Collection, Folders, Image, Keyword, KeywordTree,
+            LibraryFile, LrId, LrObject};
 
 const USAGE: &'static str = "
 Usage:
@@ -53,29 +44,25 @@ struct Args {
     flag_libfiles: bool,
     flag_images: bool,
     flag_folders: bool,
-    flag_keywords: bool
+    flag_keywords: bool,
 }
 
 #[derive(Debug, Deserialize)]
 enum Command {
     Dump,
     Audit,
-    Unknown(String)
+    Unknown(String),
 }
 
 fn main() {
-
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.argv(std::env::args()).deserialize())
         .unwrap_or_else(|e| e.exit());
     {
         match args.arg_command {
-            Command::Dump =>
-                process_dump(&args),
-            Command::Audit =>
-                process_audit(&args),
-            _ =>
-                ()
+            Command::Dump => process_dump(&args),
+            Command::Audit => process_audit(&args),
+            _ => (),
         };
     }
 }
@@ -85,14 +72,14 @@ fn process_dump(args: &Args) {
     if catalog.open() {
         catalog.load_version();
         println!("Catalog:");
-        println!("\tVersion: {} ({:?})", catalog.version,
-                 catalog.catalog_version);
+        println!(
+            "\tVersion: {} ({:?})",
+            catalog.version, catalog.catalog_version
+        );
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
         match catalog.catalog_version {
-            CatalogVersion::Lr4 |
-            CatalogVersion::Lr6 => {
-            },
+            CatalogVersion::Lr4 | CatalogVersion::Lr6 => {}
             _ => {
                 println!("Unsupported catalog version");
                 return;
@@ -138,17 +125,23 @@ fn process_dump(args: &Args) {
     }
 }
 
-fn print_keyword(level: i32, id: LrId, keywords: &BTreeMap<i64,Keyword>, tree: &KeywordTree) {
+fn print_keyword(level: i32, id: LrId, keywords: &BTreeMap<i64, Keyword>, tree: &KeywordTree) {
     if let Some(keyword) = keywords.get(&id) {
         let mut indent = String::from("");
         if level > 0 {
-            for _ in 0..level-1 {
+            for _ in 0..level - 1 {
                 indent.push(' ');
             }
             indent.push_str("+ ")
         }
-        println!("| {:>7} | {} | {:>7} | {}{}", keyword.id(), keyword.uuid(),
-                 keyword.parent, indent, keyword.name);
+        println!(
+            "| {:>7} | {} | {:>7} | {}{}",
+            keyword.id(),
+            keyword.uuid(),
+            keyword.parent,
+            indent,
+            keyword.name
+        );
         let children = tree.children_for(id);
         for child in children {
             print_keyword(level + 1, child, keywords, tree);
@@ -156,13 +149,19 @@ fn print_keyword(level: i32, id: LrId, keywords: &BTreeMap<i64,Keyword>, tree: &
     }
 }
 
-fn dump_keywords(root: LrId, keywords: &BTreeMap<i64,Keyword>, tree: &KeywordTree) {
+fn dump_keywords(root: LrId, keywords: &BTreeMap<i64, Keyword>, tree: &KeywordTree) {
     println!("Keywords");
-    println!("+---------+--------------------------------------+---------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+---------+----------------------------"
+    );
     println!("| id      | uuid                                 | parent  | name");
-    println!("+---------+--------------------------------------+---------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+---------+----------------------------"
+    );
     print_keyword(0, root, keywords, tree);
-    println!("+---------+--------------------------------------+---------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+---------+----------------------------"
+    );
 }
 
 fn dump_folders(folders: &Folders) {
@@ -171,19 +170,36 @@ fn dump_folders(folders: &Folders) {
     println!("| id      | uuid                                 | name             | absolute path");
     println!("+---------+--------------------------------------+------------------+----------------------------");
     for root in &folders.roots {
-        println!("| {:>7} | {} | {:<16} | {:<26}", root.id(), root.uuid(), root.name, root.absolute_path);
+        println!(
+            "| {:>7} | {} | {:<16} | {:<26}",
+            root.id(),
+            root.uuid(),
+            root.name,
+            root.absolute_path
+        );
     }
     println!("+---------+--------------------------------------+------------------+----------------------------");
     println!("Folders");
-    println!("+---------+--------------------------------------+--------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+--------+----------------------------"
+    );
     println!("| id      | uuid                                 | root   | path");
-    println!("+---------+--------------------------------------+--------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+--------+----------------------------"
+    );
     for folder in &folders.folders {
-        println!("| {:>7} | {} | {:>7} | {:<26} | {:?}",
-                 folder.id(), folder.uuid(), folder.root_folder,
-                 folder.path_from_root, folder.content);
+        println!(
+            "| {:>7} | {} | {:>7} | {:<26} | {:?}",
+            folder.id(),
+            folder.uuid(),
+            folder.root_folder,
+            folder.path_from_root,
+            folder.content
+        );
     }
-    println!("+---------+--------------------------------------+--------+----------------------------");
+    println!(
+        "+---------+--------------------------------------+--------+----------------------------"
+    );
 }
 
 fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
@@ -192,10 +208,15 @@ fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
     println!("| id      | uuid                                 | folder  | extens | basename         | sidecars |");
     println!("+---------+--------------------------------------+---------+--------+------------------+----------+");
     for libfile in libfiles {
-        println!("| {:>7} | {} | {:>7} | {:<6} | {:<16} | {:<8} |",
-                 libfile.id(), libfile.uuid(), libfile.folder,
-                 libfile.extension, libfile.basename,
-                 libfile.sidecar_extensions);
+        println!(
+            "| {:>7} | {} | {:>7} | {:<6} | {:<16} | {:<8} |",
+            libfile.id(),
+            libfile.uuid(),
+            libfile.folder,
+            libfile.extension,
+            libfile.basename,
+            libfile.sidecar_extensions
+        );
     }
     println!("+---------+--------------------------------------+---------+--------+------------------+----------+");
 }
@@ -206,14 +227,18 @@ fn dump_images(images: &Vec<Image>) {
     println!("| id      | uuid                                 | root    | format | or     | P  |");
     println!("+---------+--------------------------------------+---------+--------+--------+----+");
     for image in images {
-        println!("| {:>7} | {} | {:>7} | {:<6} | {:<2}({}) | {} |",
-                 image.id(), image.uuid(), image.root_file,
-                 image.file_format,
-                 image.orientation.as_ref().unwrap_or(&String::new()), image.exif_orientation(),
-                 image.pick);
+        println!(
+            "| {:>7} | {} | {:>7} | {:<6} | {:<2}({}) | {} |",
+            image.id(),
+            image.uuid(),
+            image.root_file,
+            image.file_format,
+            image.orientation.as_ref().unwrap_or(&String::new()),
+            image.exif_orientation(),
+            image.pick
+        );
     }
     println!("+---------+--------------------------------------+---------+--------+--------+----+");
-
 }
 
 fn dump_collections(collections: &Vec<Collection>) {
@@ -222,14 +247,15 @@ fn dump_collections(collections: &Vec<Collection>) {
     println!("| id      | name                                 | parent  |");
     println!("+---------+--------------------------------------+---------+------");
     for collection in collections {
-        println!("| {:>7} | {:<36} | {:>7} | {}",
-                 collection.id(), collection.name, collection.parent,
-                 collection.system_only)
+        println!(
+            "| {:>7} | {:<36} | {:>7} | {}",
+            collection.id(),
+            collection.name,
+            collection.parent,
+            collection.system_only
+        )
     }
     println!("+---------+--------------------------------------+---------+------");
-
 }
 
-fn process_audit(_: &Args) {
-
-}
+fn process_audit(_: &Args) {}

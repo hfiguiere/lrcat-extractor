@@ -7,7 +7,7 @@
 use rusqlite::Row;
 
 use fromdb::FromDb;
-use lrobject::{LrId,LrObject};
+use lrobject::{LrId, LrObject};
 
 /// Define a backing file in the `Catalog`. `Images` are
 /// connected to one.
@@ -52,6 +52,4 @@ impl FromDb for LibraryFile {
     }
 }
 
-impl LibraryFile {
-
-}
+impl LibraryFile {}

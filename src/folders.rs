@@ -4,11 +4,11 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use rusqlite::{Row,Connection};
+use rusqlite::{Connection, Row};
 
 use content::Content;
 use fromdb::FromDb;
-use lrobject::{LrId,LrObject};
+use lrobject::{LrId, LrObject};
 
 /// A folder define the container for `LibraryFiles`
 /// They are all attached to a `RootFolder`
@@ -51,8 +51,13 @@ impl FromDb for Folder {
 
 impl Folder {
     pub fn new(id: LrId, uuid: &str) -> Folder {
-        Folder { id, uuid: String::from(uuid), path_from_root: String::from(""),
-                 root_folder: 0, content: None }
+        Folder {
+            id,
+            uuid: String::from(uuid),
+            path_from_root: String::from(""),
+            root_folder: 0,
+            content: None,
+        }
     }
     pub fn read_content(&self, conn: &Connection) -> Content {
         Content::from_db(conn, "AgFolderContent", "containingFolder", self.id)
@@ -85,9 +90,13 @@ impl LrObject for RootFolder {
 impl RootFolder {
     /// Create a new `RootFolder` with an id and uuid
     pub fn new(id: LrId, uuid: &str) -> RootFolder {
-        RootFolder { id, uuid: String::from(uuid),
-                     absolute_path: String::from(""),
-                     name: String::from(""), relative_path_from_catalog: None }
+        RootFolder {
+            id,
+            uuid: String::from(uuid),
+            absolute_path: String::from(""),
+            name: String::from(""),
+            relative_path_from_catalog: None,
+        }
     }
 }
 
@@ -109,7 +118,6 @@ impl FromDb for RootFolder {
     fn read_db_columns() -> &'static str {
         "id_local,id_global,absolutePath,name,relativePathFromCatalog"
     }
-
 }
 
 /// Represent the all the folders
@@ -121,11 +129,12 @@ pub struct Folders {
 }
 
 impl Folders {
-
     /// Create an empty `Folders`
     pub fn new() -> Folders {
-        Folders { roots: vec!(),
-                  folders: vec!() }
+        Folders {
+            roots: vec![],
+            folders: vec![],
+        }
     }
 
     /// Return `true` is it is empty
@@ -173,7 +182,6 @@ impl Folders {
         return Some(root_path);
     }
 }
-
 
 #[cfg(test)]
 #[test]

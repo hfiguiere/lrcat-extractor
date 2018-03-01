@@ -5,26 +5,26 @@
  */
 
 use std::collections::BTreeMap;
-use std::path::{PathBuf,Path};
+use std::path::{Path, PathBuf};
 
 use rusqlite::Connection;
 use rusqlite;
 
 use collections::Collection;
-use folders::{Folders,Folder,RootFolder};
+use folders::{Folder, Folders, RootFolder};
 use fromdb::FromDb;
 use images::Image;
 use keywords::Keyword;
 use keywordtree::KeywordTree;
 use libraryfiles::LibraryFile;
-use lrobject::{LrId,LrObject};
+use lrobject::{LrId, LrObject};
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
 const LR6_VERSION: i32 = 6;
 
 /// Catalog version.
-#[derive(Debug,PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum CatalogVersion {
     /// Unknown version
     Unknown,
@@ -48,7 +48,7 @@ pub struct Catalog {
     pub root_keyword_id: LrId,
 
     /// The keywords, mapped in the local `LrId`
-    keywords: BTreeMap<LrId,Keyword>,
+    keywords: BTreeMap<LrId, Keyword>,
     /// The `Folders` container.
     folders: Folders,
     /// The `Image` container
@@ -63,7 +63,6 @@ pub struct Catalog {
 }
 
 impl Catalog {
-
     /// Create a new catalog.
     pub fn new(path: &Path) -> Catalog {
         Catalog {
@@ -73,10 +72,10 @@ impl Catalog {
             root_keyword_id: 0,
             keywords: BTreeMap::new(),
             folders: Folders::new(),
-            images: vec!(),
-            libfiles: vec!(),
-            collections: vec!(),
-            dbconn: None
+            images: vec![],
+            libfiles: vec![],
+            collections: vec![],
+            dbconn: None,
         }
     }
 
@@ -95,8 +94,9 @@ impl Catalog {
 
     /// Get a variable from the table.
     fn get_variable<T>(&self, name: &str) -> Option<T>
-        where T: rusqlite::types::FromSql {
-
+    where
+        T: rusqlite::types::FromSql,
+    {
         let conn = try_opt!(self.dbconn.as_ref());
         if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
             let mut rows = stmt.query(&[&name]).unwrap();
@@ -123,29 +123,26 @@ impl Catalog {
             self.version = version;
             let v = Catalog::parse_version(self.version.clone());
             self.catalog_version = match v {
-                LR6_VERSION =>
-                    CatalogVersion::Lr6,
-                LR4_VERSION =>
-                    CatalogVersion::Lr4,
-                LR3_VERSION =>
-                    CatalogVersion::Lr3,
-                _ =>
-                    CatalogVersion::Unknown
+                LR6_VERSION => CatalogVersion::Lr6,
+                LR4_VERSION => CatalogVersion::Lr4,
+                LR3_VERSION => CatalogVersion::Lr3,
+                _ => CatalogVersion::Unknown,
             };
         }
 
-        if let Some(root_keyword_id) =
-            self.get_variable::<f64>("AgLibraryKeyword_rootTagID") {
-                self.root_keyword_id = root_keyword_id.round() as LrId;
-            }
+        if let Some(root_keyword_id) = self.get_variable::<f64>("AgLibraryKeyword_rootTagID") {
+            self.root_keyword_id = root_keyword_id.round() as LrId;
+        }
     }
 
     /// Generic object loader leveraging the FromDb protocol
     fn load_objects<T: FromDb>(conn: &Connection) -> Vec<T> {
-        let mut result: Vec<T> = vec!();
-        let query = format!("SELECT {} FROM {}",
-                            T::read_db_columns(),
-                            T::read_db_tables());
+        let mut result: Vec<T> = vec![];
+        let query = format!(
+            "SELECT {} FROM {}",
+            T::read_db_columns(),
+            T::read_db_tables()
+        );
         if let Ok(mut stmt) = conn.prepare(&query) {
             let mut rows = stmt.query(&[]).unwrap();
             while let Some(Ok(row)) = rows.next() {
@@ -168,7 +165,7 @@ impl Catalog {
     }
 
     /// Load keywords.
-    pub fn load_keywords(&mut self) -> &BTreeMap<LrId,Keyword> {
+    pub fn load_keywords(&mut self) -> &BTreeMap<LrId, Keyword> {
         if self.keywords.is_empty() {
             if let Some(ref conn) = self.dbconn {
                 let result = Catalog::load_objects::<Keyword>(&conn);
