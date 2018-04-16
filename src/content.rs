@@ -4,9 +4,18 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+use std::fmt;
+
 use rusqlite::Connection;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
+pub enum SortDirection {
+    Ascending,
+    Descending,
+    Unknown,
+}
+
+#[derive(Default)]
 /// Represent the content view. Applies to `Collection` and `Folder`
 pub struct Content {
     /// Filter
@@ -14,9 +23,40 @@ pub struct Content {
     /// What to sort on
     pub sort_type: Option<String>,
     /// Which direction to sort
-    pub sort_direction: Option<String>,
+    pub sort_direction: Option<SortDirection>,
     /// Define the smart collection (if any)
     pub smart_collection: Option<String>,
+}
+
+impl fmt::Debug for Content {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut empty: bool = true;
+        if let Some(ref filter) = self.filter {
+            try!(write!(f, "filter: {:?}", filter));
+            empty = false;
+        }
+        if let Some(ref sort_type) = self.sort_type {
+            if !empty {
+                try!(write!(f, ", "));
+            }
+            try!(write!(f, "sort: {:?}", sort_type));
+            empty = false;
+        }
+        if let Some(ref direction) = self.sort_direction {
+            if !empty {
+                try!(write!(f, ", "));
+            }
+            try!(write!(f, "direction: {:?}", direction));
+            empty = false;
+        }
+        if let Some(ref smart_coll) = self.smart_collection {
+            if !empty {
+                try!(write!(f, ", "));
+            }
+            try!(write!(f, "smart_collection: {:?}", smart_coll));
+        }
+        Ok(())
+    }
 }
 
 impl Content {
@@ -40,7 +80,17 @@ impl Content {
                 match owning_module.as_str() {
                     "com.adobe.ag.library.filter" => content.filter = value.ok(),
                     "com.adobe.ag.library.sortType" => content.sort_type = value.ok(),
-                    "com.adobe.ag.library.sortDirection" => content.sort_direction = value.ok(),
+                    "com.adobe.ag.library.sortDirection" => {
+                        content.sort_direction = if let Some(sd) = value.ok() {
+                            match sd.as_str() {
+                                "ascending" => Some(SortDirection::Ascending),
+                                "descending" => Some(SortDirection::Descending),
+                                _ => Some(SortDirection::Unknown),
+                            }
+                        } else {
+                            None
+                        }
+                    }
                     "ag.library.smart_collection" => content.smart_collection = value.ok(),
                     _ => (),
                 };
