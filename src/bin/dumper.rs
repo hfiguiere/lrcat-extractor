@@ -239,19 +239,20 @@ fn dump_images(images: &Vec<Image>) {
 
 fn dump_collections(collections: &Vec<Collection>) {
     println!("Collections");
-    println!("+---------+--------------------------------------+---------+------");
-    println!("| id      | name                                 | parent  |");
-    println!("+---------+--------------------------------------+---------+------");
+    println!("+---------+--------------------------------------+---------+-------+----------------------");
+    println!("| id      | name                                 | parent  | syst  | content");
+    println!("+---------+--------------------------------------+---------+-------+----------------------");
     for collection in collections {
         println!(
-            "| {:>7} | {:<36} | {:>7} | {}",
+            "| {:>7} | {:<36} | {:>7} | {:<5} | {:?}",
             collection.id(),
             collection.name,
             collection.parent,
-            collection.system_only
+            collection.system_only,
+            collection.content
         )
     }
-    println!("+---------+--------------------------------------+---------+------");
+    println!("+---------+--------------------------------------+---------+-------+----------------------");
 }
 
 fn process_audit(_: &Args) {}
