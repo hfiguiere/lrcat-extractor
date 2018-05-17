@@ -8,6 +8,8 @@ use std::fmt;
 
 use rusqlite::Connection;
 
+use lron;
+
 #[derive(Debug)]
 pub enum SortDirection {
     Ascending,
@@ -25,7 +27,7 @@ pub struct Content {
     /// Which direction to sort
     pub sort_direction: Option<SortDirection>,
     /// Define the smart collection (if any)
-    pub smart_collection: Option<String>,
+    pub smart_collection: Option<lron::Object>,
 }
 
 impl fmt::Debug for Content {
@@ -91,7 +93,11 @@ impl Content {
                             None
                         }
                     }
-                    "ag.library.smart_collection" => content.smart_collection = value.ok(),
+                    "ag.library.smart_collection" => {
+                        if let Some(ref sc) = value.ok() {
+                            content.smart_collection = lron::Object::from_str(sc).ok();
+                        }
+                    }
                     _ => (),
                 };
             }

@@ -19,6 +19,7 @@ mod keywords;
 mod keywordtree;
 mod libraryfiles;
 mod lrobject;
+pub mod lron;
 
 pub use catalog::{Catalog, CatalogVersion};
 pub use collections::Collection;
