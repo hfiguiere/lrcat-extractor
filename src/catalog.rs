@@ -64,10 +64,12 @@ pub struct Catalog {
 
 impl Catalog {
     /// Create a new catalog.
-    pub fn new(path: &Path) -> Catalog {
+    pub fn new<P>(path: P) -> Catalog
+        where P: AsRef<Path>
+    {
         Catalog {
-            path: PathBuf::from(path),
-            version: String::from(""),
+            path: path.as_ref().to_path_buf(),
+            version: "".to_string(),
             catalog_version: CatalogVersion::Unknown,
             root_keyword_id: 0,
             keywords: BTreeMap::new(),
