@@ -18,7 +18,7 @@ use docopt::Docopt;
 use lrcat::{Catalog, CatalogVersion, Collection, Folders, Image, Keyword, KeywordTree,
             LibraryFile, LrId, LrObject};
 
-const USAGE: &'static str = "
+const USAGE: &str = "
 Usage:
   dumper <command> ([--all] | [--collections] [--libfiles] [--images] [--folders] [--keywords]) <path>
 
@@ -198,7 +198,7 @@ fn dump_folders(folders: &Folders) {
     println!("+---------+--------------------------------------+--------+-----------------------------+----------");
 }
 
-fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
+fn dump_libfiles(libfiles: &[LibraryFile]) {
     println!("Libfiles");
     println!("+---------+--------------------------------------+---------+--------+---------------------+----------+");
     println!("| id      | uuid                                 | folder  | extens | basename            | sidecars |");
@@ -217,7 +217,7 @@ fn dump_libfiles(libfiles: &Vec<LibraryFile>) {
     println!("+---------+--------------------------------------+---------+--------+---------------------+----------+");
 }
 
-fn dump_images(images: &Vec<Image>) {
+fn dump_images(images: &[Image]) {
     println!("Images");
     println!("+---------+--------------------------------------+---------+--------+-------+----+");
     println!("| id      | uuid                                 | root    | format | or    | P  |");
@@ -237,7 +237,7 @@ fn dump_images(images: &Vec<Image>) {
     println!("+---------+--------------------------------------+---------+--------+-------+----+");
 }
 
-fn dump_collections(collections: &Vec<Collection>) {
+fn dump_collections(collections: &[Collection]) {
     println!("Collections");
     println!("+---------+--------------------------------------+---------+-------+----------------------");
     println!("| id      | name                                 | parent  | syst  | content");

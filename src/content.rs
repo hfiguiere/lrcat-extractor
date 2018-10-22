@@ -83,7 +83,7 @@ impl Content {
                     "com.adobe.ag.library.filter" => content.filter = value.ok(),
                     "com.adobe.ag.library.sortType" => content.sort_type = value.ok(),
                     "com.adobe.ag.library.sortDirection" => {
-                        content.sort_direction = if let Some(sd) = value.ok() {
+                        content.sort_direction = if let Ok(sd) = value {
                             match sd.as_str() {
                                 "ascending" => Some(SortDirection::Ascending),
                                 "descending" => Some(SortDirection::Descending),
@@ -94,8 +94,8 @@ impl Content {
                         }
                     }
                     "ag.library.smart_collection" => {
-                        if let Some(ref sc) = value.ok() {
-                            content.smart_collection = lron::Object::from_str(sc).ok();
+                        if let Ok(ref sc) = value {
+                            content.smart_collection = lron::Object::from_string(sc).ok();
                         }
                     }
                     _ => (),

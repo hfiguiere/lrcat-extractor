@@ -186,7 +186,7 @@ impl Catalog {
                 let folders = Catalog::load_objects::<RootFolder>(&conn);
                 self.folders.append_root_folders(folders);
                 let mut folders = Catalog::load_objects::<Folder>(&conn);
-                for ref mut folder in &mut folders {
+                for folder in &mut folders {
                     folder.content = Some(folder.read_content(conn));
                 }
                 self.folders.append_folders(folders);
@@ -222,7 +222,7 @@ impl Catalog {
         if self.collections.is_empty() {
             if let Some(ref conn) = self.dbconn {
                 let mut collections = Catalog::load_objects::<Collection>(&conn);
-                for ref mut collection in &mut collections {
+                for collection in &mut collections {
                     collection.content = Some(collection.read_content(conn));
                 }
                 self.collections.append(&mut collections);

@@ -38,17 +38,17 @@ impl FromDb for Keyword {
         Some(Keyword {
             id: row.get(0),
             uuid: row.get(1),
-            name: name.unwrap_or(String::from("")),
+            name: name.unwrap_or_default(),
             parent: parent.unwrap_or(0),
         })
     }
 
     fn read_db_tables() -> &'static str {
-        return "AgLibraryKeyword";
+        "AgLibraryKeyword"
     }
 
     fn read_db_columns() -> &'static str {
-        return "id_local,id_global,cast(dateCreated as text),name,parent";
+        "id_local,id_global,cast(dateCreated as text),name,parent"
     }
 }
 

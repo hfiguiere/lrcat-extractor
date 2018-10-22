@@ -121,6 +121,7 @@ impl FromDb for RootFolder {
 }
 
 /// Represent the all the folders
+#[derive(Default)]
 pub struct Folders {
     /// The `RootFolder` list
     pub roots: Vec<RootFolder>,
@@ -129,12 +130,9 @@ pub struct Folders {
 }
 
 impl Folders {
-    /// Create an empty `Folders`
+
     pub fn new() -> Folders {
-        Folders {
-            roots: vec![],
-            folders: vec![],
-        }
+        Folders::default()
     }
 
     /// Return `true` is it is empty
@@ -179,7 +177,7 @@ impl Folders {
         let root_folder = try_opt!(self.find_root_folder(folder.root_folder));
         let mut root_path = root_folder.absolute_path.clone();
         root_path += &folder.path_from_root;
-        return Some(root_path);
+        Some(root_path)
     }
 }
 

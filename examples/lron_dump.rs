@@ -20,7 +20,7 @@ fn dump_lron(filename: &str) -> std::io::Result<()> {
     let mut buffer = String::new();
     file.read_to_string(&mut buffer)?;
 
-    let o = lrcat::lron::Object::from_str(&buffer);
+    let o = lrcat::lron::Object::from_string(&buffer);
     match o {
         Ok(ref o) => {
             println!("Result: {:?}", o);

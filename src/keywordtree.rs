@@ -11,16 +11,16 @@ use super::lrobject::LrObject;
 
 /// Keyword tree
 /// Operate as a hash multimap of parent -> Vec<child>
+#[derive(Default)]
 pub struct KeywordTree {
     // HashMap. Key is the parent id. Values: the children ids.
     map: HashMap<i64, Vec<i64>>,
 }
 
 impl KeywordTree {
+
     pub fn new() -> KeywordTree {
-        KeywordTree {
-            map: HashMap::new(),
-        }
+        KeywordTree::default()
     }
 
     /// Get children for keyword with `id`
@@ -32,9 +32,7 @@ impl KeywordTree {
     }
 
     fn add_child(&mut self, keyword: &Keyword) {
-        if !self.map.contains_key(&keyword.parent) {
-            self.map.insert(keyword.parent, vec![]);
-        }
+        self.map.entry(keyword.parent).or_insert_with(|| vec![]);
         self.map
             .get_mut(&keyword.parent)
             .unwrap()
@@ -43,7 +41,7 @@ impl KeywordTree {
 
     /// Add children to the tree node.
     pub fn add_children(&mut self, children: &BTreeMap<i64, Keyword>) {
-        for (_, child) in children {
+        for child in children.values() {
             self.add_child(child);
         }
     }

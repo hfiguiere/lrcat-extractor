@@ -37,7 +37,7 @@ pub enum Object {
 
 impl Object {
     /// Create an object from a string
-    pub fn from_str(s: &str) -> Result<Object, grammar::ParseError> {
+    pub fn from_string(s: &str) -> Result<Object, grammar::ParseError> {
         grammar::root(s)
     }
 }
@@ -48,7 +48,7 @@ mod grammar {
 
 #[test]
 fn test_parser() {
-    let r = Object::from_str(
+    let r = Object::from_string(
         "s = { \
          { \
          criteria = \"rating\", \
