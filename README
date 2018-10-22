@@ -2,13 +2,13 @@ lrcat extractor
 ===============
 
 
-Extract the data from Adobe Lightroom catalogs (currently version 4)
+Extract the data from Adobe Lightroom catalogs (currently version 4 and 6)
 in order to facilitate importing it into another application.
 
 This is written in Rust.
 
 Requires:
--Rust (1.5)
+-Rust (1.29)
 -cargo to build
 
 Building
