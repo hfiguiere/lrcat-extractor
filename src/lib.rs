@@ -5,6 +5,7 @@
  */
 
 extern crate chrono;
+extern crate peg;
 extern crate rusqlite;
 #[macro_use]
 extern crate try_opt;

@@ -37,6 +37,8 @@ fn main() {
     }
 
     for filename in args.iter() {
-        dump_lron(filename).is_err();
+        if dump_lron(filename).is_err() {
+            println!("Error dumping lron");
+        }
     }
 }
