@@ -37,16 +37,13 @@ impl Image {
     /// Error = -1 or unknown value
     /// Otherwise the Exif value for `orientation`
     pub fn exif_orientation(&self) -> i32 {
-        match self.orientation {
-            Some(ref s) => match s.as_ref() {
-                "AB" => 1,
-                "DA" => 8,
-                "BC" => 6,
-                "CD" => 3,
-                _ => -1,
-            },
-            None => 0,
-        }
+        self.orientation.as_ref().map_or(0, |s| match s.as_ref() {
+            "AB" => 1,
+            "DA" => 8,
+            "BC" => 6,
+            "CD" => 3,
+            _ => -1,
+        })
     }
 }
 
