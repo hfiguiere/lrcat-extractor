@@ -34,28 +34,28 @@ impl fmt::Debug for Content {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut empty: bool = true;
         if let Some(ref filter) = self.filter {
-            try!(write!(f, "filter: {:?}", filter));
+            write!(f, "filter: {:?}", filter)?;
             empty = false;
         }
         if let Some(ref sort_type) = self.sort_type {
             if !empty {
-                try!(write!(f, ", "));
+                write!(f, ", ")?;
             }
-            try!(write!(f, "sort: {:?}", sort_type));
+            write!(f, "sort: {:?}", sort_type)?;
             empty = false;
         }
         if let Some(ref direction) = self.sort_direction {
             if !empty {
-                try!(write!(f, ", "));
+                write!(f, ", ")?;
             }
-            try!(write!(f, "direction: {:?}", direction));
+            write!(f, "direction: {:?}", direction)?;
             empty = false;
         }
         if let Some(ref smart_coll) = self.smart_collection {
             if !empty {
-                try!(write!(f, ", "));
+                write!(f, ", ")?;
             }
-            try!(write!(f, "smart_collection: {:?}", smart_coll));
+            write!(f, "smart_collection: {:?}", smart_coll)?;
         }
         Ok(())
     }

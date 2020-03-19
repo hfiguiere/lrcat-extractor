@@ -93,7 +93,7 @@ rule string_literal() -> String
         = "\"" s:$((!['"'][_])*) "\"" { s.to_owned() }
 
 rule zstr() -> String
-        = "ZSTR" _() s:string_literal() { s.to_owned() }
+        = "ZSTR" _() s:string_literal() { s }
 
 rule _() = quiet!{[' ' | '\r' | '\n' | '\t']*}
 
