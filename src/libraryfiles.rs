@@ -6,8 +6,8 @@
 
 use rusqlite::Row;
 
-use fromdb::FromDb;
-use lrobject::{LrId, LrObject};
+use crate::fromdb::FromDb;
+use crate::lrobject::{LrId, LrObject};
 
 /// Define a backing file in the `Catalog`. `Images` are
 /// connected to one.

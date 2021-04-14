@@ -8,7 +8,7 @@ use std::fmt;
 
 use rusqlite::Connection;
 
-use lron;
+use crate::lron;
 
 #[derive(Debug)]
 pub enum SortDirection {

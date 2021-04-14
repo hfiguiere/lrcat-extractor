@@ -6,8 +6,8 @@
 
 use rusqlite::Row;
 
-use fromdb::FromDb;
-use lrobject::{LrId, LrObject};
+use crate::fromdb::FromDb;
+use crate::lrobject::{LrId, LrObject};
 
 /// An image in the `Catalog`. Requires a `LibraryFile` backing it
 pub struct Image {

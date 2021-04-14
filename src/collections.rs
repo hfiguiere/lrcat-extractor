@@ -6,9 +6,9 @@
 
 use rusqlite::{Connection, Row};
 
-use content::Content;
-use fromdb::FromDb;
-use lrobject::LrId;
+use crate::content::Content;
+use crate::fromdb::FromDb;
+use crate::lrobject::LrId;
 
 /// A collection as defined in Lightroom
 pub struct Collection {

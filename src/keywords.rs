@@ -6,8 +6,8 @@
 
 use rusqlite::Row;
 
-use fromdb::FromDb;
-use lrobject::{LrId, LrObject};
+use crate::fromdb::FromDb;
+use crate::lrobject::{LrId, LrObject};
 
 /// A Lightroom keyword.
 pub struct Keyword {

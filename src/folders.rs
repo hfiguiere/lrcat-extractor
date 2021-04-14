@@ -6,9 +6,9 @@
 
 use rusqlite::{Connection, Row};
 
-use content::Content;
-use fromdb::FromDb;
-use lrobject::{LrId, LrObject};
+use crate::content::Content;
+use crate::fromdb::FromDb;
+use crate::lrobject::{LrId, LrObject};
 
 /// A folder define the container for `LibraryFiles`
 /// They are all attached to a `RootFolder`

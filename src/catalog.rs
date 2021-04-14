@@ -10,14 +10,14 @@ use std::path::{Path, PathBuf};
 use rusqlite;
 use rusqlite::{params, Connection};
 
-use collections::Collection;
-use folders::{Folder, Folders, RootFolder};
-use fromdb::FromDb;
-use images::Image;
-use keywords::Keyword;
-use keywordtree::KeywordTree;
-use libraryfiles::LibraryFile;
-use lrobject::{LrId, LrObject};
+use crate::collections::Collection;
+use crate::folders::{Folder, Folders, RootFolder};
+use crate::fromdb::FromDb;
+use crate::images::Image;
+use crate::keywords::Keyword;
+use crate::keywordtree::KeywordTree;
+use crate::libraryfiles::LibraryFile;
+use crate::lrobject::{LrId, LrObject};
 
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
