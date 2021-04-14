@@ -32,12 +32,12 @@ impl LrObject for Folder {
 }
 
 impl FromDb for Folder {
-    fn read_from(row: &Row) -> Option<Self> {
-        Some(Folder {
-            id: row.get(0),
-            uuid: row.get(1),
-            path_from_root: row.get(2),
-            root_folder: row.get(3),
+    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+        Ok(Folder {
+            id: row.get(0)?,
+            uuid: row.get(1)?,
+            path_from_root: row.get(2)?,
+            root_folder: row.get(3)?,
             content: None,
         })
     }
@@ -101,13 +101,13 @@ impl RootFolder {
 }
 
 impl FromDb for RootFolder {
-    fn read_from(row: &Row) -> Option<Self> {
-        Some(RootFolder {
-            id: row.get(0),
-            uuid: row.get(1),
-            absolute_path: row.get(2),
-            name: row.get(3),
-            relative_path_from_catalog: row.get_checked(4).ok(),
+    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+        Ok(RootFolder {
+            id: row.get(0)?,
+            uuid: row.get(1)?,
+            absolute_path: row.get(2)?,
+            name: row.get(3)?,
+            relative_path_from_catalog: row.get(4).ok(),
         })
     }
 

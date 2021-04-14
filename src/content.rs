@@ -76,30 +76,37 @@ impl Content {
         );
         if let Ok(mut stmt) = conn.prepare(&query) {
             let mut rows = stmt.query(&[&container_id]).unwrap();
-            while let Some(Ok(row)) = rows.next() {
-                let value = row.get_checked(0);
-                let owning_module: String = row.get(1);
-                match owning_module.as_str() {
-                    "com.adobe.ag.library.filter" => content.filter = value.ok(),
-                    "com.adobe.ag.library.sortType" => content.sort_type = value.ok(),
-                    "com.adobe.ag.library.sortDirection" => {
-                        content.sort_direction = if let Ok(sd) = value {
-                            match sd.as_str() {
-                                "ascending" => Some(SortDirection::Ascending),
-                                "descending" => Some(SortDirection::Descending),
-                                _ => Some(SortDirection::Unknown),
+            while let Ok(Some(row)) = rows.next() {
+                // We ignore the result.
+                // XXX shall we display a warning on error? likely
+                let _ = row.get(1).map(|owning_module: String| {
+                    let value = row.get(0);
+                    match owning_module.as_str() {
+                        "com.adobe.ag.library.filter" =>
+                            content.filter = value.ok(),
+                        "com.adobe.ag.library.sortType" =>
+                            content.sort_type = value.ok(),
+                        "com.adobe.ag.library.sortDirection" => {
+                            content.sort_direction = if let Ok(sd) = value {
+                                match sd.as_str() {
+                                    "ascending" =>
+                                        Some(SortDirection::Ascending),
+                                    "descending" =>
+                                        Some(SortDirection::Descending),
+                                    _ => Some(SortDirection::Unknown),
+                                }
+                            } else {
+                                None
                             }
-                        } else {
-                            None
                         }
-                    }
-                    "ag.library.smart_collection" => {
-                        if let Ok(ref sc) = value {
-                            content.smart_collection = lron::Object::from_string(sc).ok();
+                        "ag.library.smart_collection" => {
+                            if let Ok(ref sc) = value {
+                                content.smart_collection = lron::Object::from_string(sc).ok();
+                            }
                         }
-                    }
-                    _ => (),
-                };
+                        _ => (),
+                    };
+                });
             }
         }
         content

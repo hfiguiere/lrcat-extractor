@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use rusqlite::Connection;
+use rusqlite::{params, Connection};
 use rusqlite;
 
 use collections::Collection;
@@ -103,8 +103,8 @@ impl Catalog {
         let conn = try_opt!(self.dbconn.as_ref());
         if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
             let mut rows = stmt.query(&[&name]).unwrap();
-            if let Some(Ok(row)) = rows.next() {
-                return Some(row.get(0));
+            if let Ok(Some(row)) = rows.next() {
+                return row.get(0).ok();
             }
         }
         None
@@ -147,10 +147,13 @@ impl Catalog {
             T::read_db_tables()
         );
         if let Ok(mut stmt) = conn.prepare(&query) {
-            let mut rows = stmt.query(&[]).unwrap();
-            while let Some(Ok(row)) = rows.next() {
-                if let Some(object) = T::read_from(&row) {
-                    result.push(object);
+            if let Ok(rows) = stmt.query_map(params![], T::read_from) {
+                for object in rows {
+                    match object {
+                        Ok(obj) =>
+                            result.push(obj),
+                        _ => {}
+                    }
                 }
             }
         }

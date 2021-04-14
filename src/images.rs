@@ -57,18 +57,18 @@ impl LrObject for Image {
 }
 
 impl FromDb for Image {
-    fn read_from(row: &Row) -> Option<Self> {
-        Some(Image {
-            id: row.get(0),
-            uuid: row.get(1),
-            master_image: row.get_checked(2).ok(),
-            rating: row.get_checked(3).ok(),
-            root_file: row.get(4),
-            file_format: row.get(5),
-            pick: row.get(6),
-            orientation: row.get_checked(7).ok(),
-            capture_time: row.get(8),
-            copy_name: row.get_checked(9).ok(),
+    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+        Ok(Image {
+            id: row.get(0)?,
+            uuid: row.get(1)?,
+            master_image: row.get(2).ok(),
+            rating: row.get(3).ok(),
+            root_file: row.get(4)?,
+            file_format: row.get(5)?,
+            pick: row.get(6)?,
+            orientation: row.get(7).ok(),
+            capture_time: row.get(8)?,
+            copy_name: row.get(9).ok(),
         })
     }
     fn read_db_tables() -> &'static str {

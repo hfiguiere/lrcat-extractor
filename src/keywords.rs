@@ -32,12 +32,12 @@ impl LrObject for Keyword {
 }
 
 impl FromDb for Keyword {
-    fn read_from(row: &Row) -> Option<Self> {
-        let name = row.get_checked(3);
-        let parent = row.get_checked(4);
-        Some(Keyword {
-            id: row.get(0),
-            uuid: row.get(1),
+    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+        let name = row.get(3).ok();
+        let parent = row.get(4).ok();
+        Ok(Keyword {
+            id: row.get(0)?,
+            uuid: row.get(1)?,
             name: name.unwrap_or_default(),
             parent: parent.unwrap_or(0),
         })

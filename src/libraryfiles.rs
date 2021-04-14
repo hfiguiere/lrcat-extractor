@@ -34,14 +34,14 @@ impl LrObject for LibraryFile {
 }
 
 impl FromDb for LibraryFile {
-    fn read_from(row: &Row) -> Option<Self> {
-        Some(LibraryFile {
-            id: row.get(0),
-            uuid: row.get(1),
-            basename: row.get(2),
-            extension: row.get(3),
-            folder: row.get(4),
-            sidecar_extensions: row.get(5),
+    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+        Ok(LibraryFile {
+            id: row.get(0)?,
+            uuid: row.get(1)?,
+            basename: row.get(2)?,
+            extension: row.get(3)?,
+            folder: row.get(4)?,
+            sidecar_extensions: row.get(5)?,
         })
     }
     fn read_db_tables() -> &'static str {
