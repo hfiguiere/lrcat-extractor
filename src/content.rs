@@ -1,8 +1,8 @@
 /*
-  This Source Code Form is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
 
 use std::fmt;
 
@@ -82,17 +82,13 @@ impl Content {
                 let _ = row.get(1).map(|owning_module: String| {
                     let value = row.get(0);
                     match owning_module.as_str() {
-                        "com.adobe.ag.library.filter" =>
-                            content.filter = value.ok(),
-                        "com.adobe.ag.library.sortType" =>
-                            content.sort_type = value.ok(),
+                        "com.adobe.ag.library.filter" => content.filter = value.ok(),
+                        "com.adobe.ag.library.sortType" => content.sort_type = value.ok(),
                         "com.adobe.ag.library.sortDirection" => {
                             content.sort_direction = if let Ok(sd) = value {
                                 match sd.as_str() {
-                                    "ascending" =>
-                                        Some(SortDirection::Ascending),
-                                    "descending" =>
-                                        Some(SortDirection::Descending),
+                                    "ascending" => Some(SortDirection::Ascending),
+                                    "descending" => Some(SortDirection::Descending),
                                     _ => Some(SortDirection::Unknown),
                                 }
                             } else {

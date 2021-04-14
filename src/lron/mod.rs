@@ -1,8 +1,8 @@
 /*
-  This Source Code Form is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
 
 //! lron stand for Lightroom Object Notation
 //! Some sort of JSON specific to Lightroom
@@ -46,7 +46,7 @@ impl Object {
 // Some sort of JSON specific to Lightroom
 //
 // lron data syntax is defined in this PEG grammar.
-peg::parser!{grammar lron() for str {
+peg::parser! {grammar lron() for str {
 
 use std::str::FromStr;
 
@@ -101,7 +101,7 @@ rule _() = quiet!{[' ' | '\r' | '\n' | '\t']*}
 
 #[test]
 fn test_parser() {
-    const DATA: & 'static str = "s = { \
+    const DATA: &'static str = "s = { \
          { \
          criteria = \"rating\", \
          operation = \">\", \

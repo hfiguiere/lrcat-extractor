@@ -1,14 +1,14 @@
 /*
-  This Source Code Form is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use rusqlite::{params, Connection};
 use rusqlite;
+use rusqlite::{params, Connection};
 
 use collections::Collection;
 use folders::{Folder, Folders, RootFolder};
@@ -66,7 +66,8 @@ pub struct Catalog {
 impl Catalog {
     /// Create a new catalog.
     pub fn new<P>(path: P) -> Catalog
-        where P: AsRef<Path>
+    where
+        P: AsRef<Path>,
     {
         Catalog {
             path: path.as_ref().to_path_buf(),
@@ -150,8 +151,7 @@ impl Catalog {
             if let Ok(rows) = stmt.query_map(params![], T::read_from) {
                 for object in rows {
                     match object {
-                        Ok(obj) =>
-                            result.push(obj),
+                        Ok(obj) => result.push(obj),
                         _ => {}
                     }
                 }
