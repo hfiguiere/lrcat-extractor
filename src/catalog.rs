@@ -7,7 +7,6 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use rusqlite;
 use rusqlite::{params, Connection};
 
 use crate::collections::Collection;
@@ -150,9 +149,8 @@ impl Catalog {
         if let Ok(mut stmt) = conn.prepare(&query) {
             if let Ok(rows) = stmt.query_map(params![], T::read_from) {
                 for object in rows {
-                    match object {
-                        Ok(obj) => result.push(obj),
-                        _ => {}
+                    if let Ok(obj) = object {
+                        result.push(obj);
                     }
                 }
             }
