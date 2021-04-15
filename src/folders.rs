@@ -173,7 +173,7 @@ impl Folders {
     /// This does not check if the path exist but merely combine
     /// the `RootFolder` absolute_path and the `Folder` relative path
     pub fn resolve_folder_path(&self, folder: &Folder) -> Option<String> {
-        let root_folder = try_opt!(self.find_root_folder(folder.root_folder));
+        let root_folder = self.find_root_folder(folder.root_folder)?;
         let mut root_path = root_folder.absolute_path.clone();
         root_path += &folder.path_from_root;
         Some(root_path)

@@ -100,7 +100,7 @@ impl Catalog {
     where
         T: rusqlite::types::FromSql,
     {
-        let conn = try_opt!(self.dbconn.as_ref());
+        let conn = self.dbconn.as_ref()?;
         if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
             let mut rows = stmt.query(&[&name]).unwrap();
             if let Ok(Some(row)) = rows.next() {
