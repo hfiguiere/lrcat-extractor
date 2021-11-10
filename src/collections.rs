@@ -30,7 +30,7 @@ impl FromDb for Collection {
             id: row.get(0)?,
             name: row.get(2)?,
             parent: row.get(3).unwrap_or(0),
-            system_only: matches!(row.get::<usize, f64>(4)? as i64, 0),
+            system_only: !matches!(row.get::<usize, f64>(4)? as i64, 0),
             content: None,
         })
     }
