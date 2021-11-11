@@ -6,6 +6,7 @@
 
 use rusqlite::{Connection, Row};
 
+use crate::catalog::CatalogVersion;
 use crate::content::Content;
 use crate::fromdb::FromDb;
 use crate::lrobject::{LrId, LrObject};
@@ -32,7 +33,7 @@ impl LrObject for Folder {
 }
 
 impl FromDb for Folder {
-    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+    fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         Ok(Folder {
             id: row.get(0)?,
             uuid: row.get(1)?,
@@ -41,10 +42,10 @@ impl FromDb for Folder {
             content: None,
         })
     }
-    fn read_db_tables() -> &'static str {
+    fn read_db_tables(_version: CatalogVersion) -> &'static str {
         "AgLibraryFolder"
     }
-    fn read_db_columns() -> &'static str {
+    fn read_db_columns(_version: CatalogVersion) -> &'static str {
         "id_local,id_global,pathFromRoot,rootFolder"
     }
 }
@@ -101,7 +102,7 @@ impl RootFolder {
 }
 
 impl FromDb for RootFolder {
-    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+    fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         Ok(RootFolder {
             id: row.get(0)?,
             uuid: row.get(1)?,
@@ -111,11 +112,11 @@ impl FromDb for RootFolder {
         })
     }
 
-    fn read_db_tables() -> &'static str {
+    fn read_db_tables(_version: CatalogVersion) -> &'static str {
         "AgLibraryRootFolder"
     }
 
-    fn read_db_columns() -> &'static str {
+    fn read_db_columns(_version: CatalogVersion) -> &'static str {
         "id_local,id_global,absolutePath,name,relativePathFromCatalog"
     }
 }

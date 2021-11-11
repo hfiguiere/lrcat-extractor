@@ -6,6 +6,7 @@
 
 use rusqlite::Row;
 
+use crate::catalog::CatalogVersion;
 use crate::fromdb::FromDb;
 use crate::lrobject::{LrId, LrObject};
 
@@ -32,7 +33,7 @@ impl LrObject for Keyword {
 }
 
 impl FromDb for Keyword {
-    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+    fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         let name = row.get(3).ok();
         let parent = row.get(4).ok();
         Ok(Keyword {
@@ -43,11 +44,11 @@ impl FromDb for Keyword {
         })
     }
 
-    fn read_db_tables() -> &'static str {
+    fn read_db_tables(_version: CatalogVersion) -> &'static str {
         "AgLibraryKeyword"
     }
 
-    fn read_db_columns() -> &'static str {
+    fn read_db_columns(_version: CatalogVersion) -> &'static str {
         "id_local,id_global,cast(dateCreated as text),name,parent"
     }
 }

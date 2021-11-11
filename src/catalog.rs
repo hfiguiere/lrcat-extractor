@@ -18,21 +18,31 @@ use crate::keywordtree::KeywordTree;
 use crate::libraryfiles::LibraryFile;
 use crate::lrobject::{LrId, LrObject};
 
+const LR2_VERSION: i32 = 2;
 const LR3_VERSION: i32 = 3;
 const LR4_VERSION: i32 = 4;
 const LR6_VERSION: i32 = 6;
 
 /// Catalog version.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum CatalogVersion {
     /// Unknown version
     Unknown,
+    /// Lightroom 2.x catalog.
+    Lr2,
     /// Lightroom 3.x catalog. Unhandled.
     Lr3,
     /// Lightroom 4.x catalog.
     Lr4,
     /// Lightroom 6.x catalog.
     Lr6,
+}
+
+impl CatalogVersion {
+    /// Return if we support this catalog version
+    pub fn is_supported(&self) -> bool {
+        (*self == Self::Lr2) || (*self == Self::Lr4) || (*self == Self::Lr6)
+    }
 }
 
 /// Catalog is the main container for Lightroom. It represents
@@ -129,6 +139,7 @@ impl Catalog {
                 LR6_VERSION => CatalogVersion::Lr6,
                 LR4_VERSION => CatalogVersion::Lr4,
                 LR3_VERSION => CatalogVersion::Lr3,
+                LR2_VERSION => CatalogVersion::Lr2,
                 _ => CatalogVersion::Unknown,
             };
         }
@@ -139,23 +150,23 @@ impl Catalog {
     }
 
     /// Generic object loader leveraging the FromDb protocol
-    fn load_objects<T: FromDb>(conn: &Connection) -> Vec<T> {
-        let mut result: Vec<T> = vec![];
+    fn load_objects<T: FromDb>(conn: &Connection, catalog_version: CatalogVersion) -> Vec<T> {
         let query = format!(
             "SELECT {} FROM {}",
-            T::read_db_columns(),
-            T::read_db_tables()
+            T::read_db_columns(catalog_version),
+            T::read_db_tables(catalog_version)
         );
         if let Ok(mut stmt) = conn.prepare(&query) {
-            if let Ok(rows) = stmt.query_map(params![], T::read_from) {
-                for object in rows {
-                    if let Ok(obj) = object {
-                        result.push(obj);
-                    }
-                }
+            if let Ok(rows) = stmt.query_and_then(params![], |row| {
+                T::read_from(catalog_version, row)
+            }) {
+                return rows.into_iter()
+                    .filter(|obj| obj.is_ok())
+                    .map(|obj| obj.unwrap())
+                    .collect();
             }
         }
-        result
+        vec![]
     }
 
     /// Load a keyword tree
@@ -172,7 +183,7 @@ impl Catalog {
     pub fn load_keywords(&mut self) -> &BTreeMap<LrId, Keyword> {
         if self.keywords.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let result = Catalog::load_objects::<Keyword>(&conn);
+                let result = Catalog::load_objects::<Keyword>(&conn, self.catalog_version);
                 for keyword in result {
                     self.keywords.insert(keyword.id(), keyword);
                 }
@@ -185,9 +196,9 @@ impl Catalog {
     pub fn load_folders(&mut self) -> &Folders {
         if self.folders.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let folders = Catalog::load_objects::<RootFolder>(&conn);
+                let folders = Catalog::load_objects::<RootFolder>(&conn, self.catalog_version);
                 self.folders.append_root_folders(folders);
-                let mut folders = Catalog::load_objects::<Folder>(&conn);
+                let mut folders = Catalog::load_objects::<Folder>(&conn, self.catalog_version);
                 for folder in &mut folders {
                     folder.content = Some(folder.read_content(conn));
                 }
@@ -201,7 +212,7 @@ impl Catalog {
     pub fn load_library_files(&mut self) -> &Vec<LibraryFile> {
         if self.libfiles.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let mut result = Catalog::load_objects::<LibraryFile>(&conn);
+                let mut result = Catalog::load_objects::<LibraryFile>(&conn, self.catalog_version);
                 self.libfiles.append(&mut result);
             }
         }
@@ -212,7 +223,7 @@ impl Catalog {
     pub fn load_images(&mut self) -> &Vec<Image> {
         if self.images.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let mut result = Catalog::load_objects::<Image>(&conn);
+                let mut result = Catalog::load_objects::<Image>(&conn, self.catalog_version);
                 self.images.append(&mut result);
             }
         }
@@ -223,7 +234,7 @@ impl Catalog {
     pub fn load_collections(&mut self) -> &Vec<Collection> {
         if self.collections.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let mut collections = Catalog::load_objects::<Collection>(&conn);
+                let mut collections = Catalog::load_objects::<Collection>(&conn, self.catalog_version);
                 for collection in &mut collections {
                     collection.content = Some(collection.read_content(conn));
                 }

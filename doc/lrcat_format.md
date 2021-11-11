@@ -29,6 +29,7 @@ This table contain settings for Lightroom. Most of it is irrelevant.
 A few exceptions:
 
 * Adobe_DBVersion:
+    0200022 for Lightroom 2
     0300025 for Lightroom 3 (currently not supported)
     0400020 for Lightroom 4.4.1
     0600008 for Lightroom 6.0 - 6.13
@@ -151,13 +152,13 @@ Adobe_AdditionalMetadata: extra metadata for images
 * lastSynchronizedHash
 * lastSyncrhonizedTimestamp
 * metadataPresetID: UUID of the metadata preset applied (?)
-* metadataVersion: seems to be 4.0 even in Lr6.
+* metadataVersion: seems to be 4.0 in Lr2, Lr4 and Lr6.
 * monochrome: 1 if monochrome?
 * xmp: the XMP text
 
 ## Collections
 
-AgLibraryCollection - collections definitions
+AgLibraryCollection (Lr4 and Lr6) - collections definitions
 
 * id_local: local id
 * creationId: "type" of collection. Some of the possible values:
@@ -174,7 +175,7 @@ AgLibraryCollection - collections definitions
 * parent: NULL is id_local of parent
 * systemOnly: (seems to apply to the quick collection and *.unsaved)
 
-AgLibraryCollectionImage - image to collection relation
+AgLibraryCollectionImage (Lr4 and Lr6) - image to collection relation
 
 * id_local: local id
 * collection: local id of the collection
@@ -186,6 +187,47 @@ AgLibraryCollectionCoverImage (Lr6) - The cover image for collections
 
 * collection: local id for `AgLibraryCollection`
 * collectionImage: local id for `AgLibraryCollectionImage`
+
+### Lr2
+
+In Lr2, there is no collection table. Instead it seems to use a
+catch-all `AgLibraryTag` table, that include collections and other
+attributes.
+
+Collections are selected with `kindName == "AgCollectionTagKind"`.
+The quick collection is `kindName == "AgQuickCollectionTagKind"`.
+
+AgLibraryTag (Lr2) - Tag definitions,
+
+* id_local: local id
+* id_glboal: global UUID
+* dateCreated:
+* genealogy: the hierarchy
+* imageCountCache: cache of count.
+* lc_name: Normalized name
+* name: Display name
+* parent: local id of parent. Reflected in genealogy.
+* kindName: (string)
+  * AgCollectionTagKind: collection
+  * AgQuickCollectionTagKind: the quick collection
+  * AgImportTagKind: import reference
+  * AgCopyrightTagKind
+  * AgCaptionTagKind
+  * AgMissingFileTagKind
+  * AgEntireLibraryContentOwnerTagKind
+  * AgLastCatalogExportTagKind
+  * AgPreviousImportContentOwnerTagKind
+  * AgTempImagesTagKind
+  * AgUpdatedPhotoTagKind
+* sortDirection: (NULL?)
+* sordOrder: (NULL?)
+
+AgLibraryTagImage (Lr2) - Tag mapping to images.
+
+* id_local: local id of relation
+* image: local id of image (table `Adobe_images`
+* tag: local id of tag
+* tagKind: kind of tag. Probably related to `AgLibraryTag.kindName`.
 
 ## Faces (Lr 6 only)
 

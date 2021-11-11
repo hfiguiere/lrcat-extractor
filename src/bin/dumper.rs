@@ -16,7 +16,8 @@ use std::path::PathBuf;
 use docopt::Docopt;
 
 use lrcat::{
-    Catalog, CatalogVersion, Collection, Folders, Image, Keyword, KeywordTree, LibraryFile, LrId,
+    Catalog, Collection, Folders, Image, Keyword, KeywordTree,
+    LibraryFile, LrId,
     LrObject,
 };
 
@@ -80,12 +81,9 @@ fn process_dump(args: &Args) {
         );
         println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
-        match catalog.catalog_version {
-            CatalogVersion::Lr4 | CatalogVersion::Lr6 => {}
-            _ => {
-                println!("Unsupported catalog version");
-                return;
-            }
+        if !catalog.catalog_version.is_supported() {
+            println!("Unsupported catalog version");
+            return;
         }
 
         {

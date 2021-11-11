@@ -6,6 +6,7 @@
 
 use rusqlite::Row;
 
+use crate::catalog::CatalogVersion;
 use crate::fromdb::FromDb;
 use crate::lrobject::{LrId, LrObject};
 
@@ -34,7 +35,7 @@ impl LrObject for LibraryFile {
 }
 
 impl FromDb for LibraryFile {
-    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+    fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         Ok(LibraryFile {
             id: row.get(0)?,
             uuid: row.get(1)?,
@@ -44,10 +45,10 @@ impl FromDb for LibraryFile {
             sidecar_extensions: row.get(5)?,
         })
     }
-    fn read_db_tables() -> &'static str {
+    fn read_db_tables(_version: CatalogVersion) -> &'static str {
         "AgLibraryFile"
     }
-    fn read_db_columns() -> &'static str {
+    fn read_db_columns(_version: CatalogVersion) -> &'static str {
         "id_local,id_global,baseName,extension,folder,sidecarExtensions"
     }
 }

@@ -6,6 +6,7 @@
 
 use rusqlite::Row;
 
+use crate::catalog::CatalogVersion;
 use crate::fromdb::FromDb;
 use crate::lrobject::{LrId, LrObject};
 
@@ -57,7 +58,7 @@ impl LrObject for Image {
 }
 
 impl FromDb for Image {
-    fn read_from(row: &Row) -> rusqlite::Result<Self> {
+    fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         Ok(Image {
             id: row.get(0)?,
             uuid: row.get(1)?,
@@ -71,10 +72,10 @@ impl FromDb for Image {
             copy_name: row.get(9).ok(),
         })
     }
-    fn read_db_tables() -> &'static str {
+    fn read_db_tables(_version: CatalogVersion) -> &'static str {
         "Adobe_images"
     }
-    fn read_db_columns() -> &'static str {
+    fn read_db_columns(_version: CatalogVersion) -> &'static str {
         "id_local,id_global,masterImage,rating,rootFile,fileFormat,cast(pick as integer),orientation,captureTime,copyName"
     }
 }

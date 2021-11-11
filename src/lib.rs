@@ -20,6 +20,26 @@ mod libraryfiles;
 mod lrobject;
 pub mod lron;
 
+/// Error from the crate, agreggate with sqlite errors.
+#[derive(Debug)]
+pub enum Error {
+    /// Skip the item (when reading from Db)
+    Skip,
+    /// Unsupported catalog version
+    UnsupportedVersion,
+    /// Sql Error
+    Sql(rusqlite::Error)
+}
+
+impl From<rusqlite::Error> for Error {
+    fn from(err: rusqlite::Error) -> Self {
+        Self::Sql(err)
+    }
+}
+
+/// Result type for the crate.
+pub type Result<T> = std::result::Result<T, Error>;
+
 pub use catalog::{Catalog, CatalogVersion};
 pub use collections::Collection;
 pub use content::Content;
