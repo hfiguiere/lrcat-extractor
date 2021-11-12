@@ -16,9 +16,7 @@ use std::path::PathBuf;
 use docopt::Docopt;
 
 use lrcat::{
-    Catalog, Collection, Folders, Image, Keyword, KeywordTree,
-    LibraryFile, LrId,
-    LrObject,
+    Catalog, Collection, Folders, Image, Keyword, KeywordTree, LibraryFile, LrId, LrObject,
 };
 
 const USAGE: &str = "

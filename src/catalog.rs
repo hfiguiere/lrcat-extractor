@@ -157,10 +157,11 @@ impl Catalog {
             T::read_db_tables(catalog_version)
         );
         if let Ok(mut stmt) = conn.prepare(&query) {
-            if let Ok(rows) = stmt.query_and_then(params![], |row| {
-                T::read_from(catalog_version, row)
-            }) {
-                return rows.into_iter()
+            if let Ok(rows) =
+                stmt.query_and_then(params![], |row| T::read_from(catalog_version, row))
+            {
+                return rows
+                    .into_iter()
                     .filter(|obj| obj.is_ok())
                     .map(|obj| obj.unwrap())
                     .collect();
@@ -234,7 +235,8 @@ impl Catalog {
     pub fn load_collections(&mut self) -> &Vec<Collection> {
         if self.collections.is_empty() {
             if let Some(ref conn) = self.dbconn {
-                let mut collections = Catalog::load_objects::<Collection>(&conn, self.catalog_version);
+                let mut collections =
+                    Catalog::load_objects::<Collection>(&conn, self.catalog_version);
                 for collection in &mut collections {
                     collection.content = Some(collection.read_content(conn));
                 }

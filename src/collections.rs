@@ -28,62 +28,53 @@ pub struct Collection {
 impl FromDb for Collection {
     fn read_from(version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         match version {
-            CatalogVersion::Lr4 |
-            CatalogVersion::Lr6 =>
-                Ok(Collection {
-                    id: row.get(0)?,
-                    name: row.get(2)?,
-                    parent: row.get(3).unwrap_or(0),
-                    system_only: !matches!(row.get::<usize, f64>(4)? as i64, 0),
-                    content: None,
-                }),
+            CatalogVersion::Lr4 | CatalogVersion::Lr6 => Ok(Collection {
+                id: row.get(0)?,
+                name: row.get(2)?,
+                parent: row.get(3).unwrap_or(0),
+                system_only: !matches!(row.get::<usize, f64>(4)? as i64, 0),
+                content: None,
+            }),
             CatalogVersion::Lr2 => {
                 let tag_type: Box<str> = row.get(3)?;
-                let name: String = row.get(1)
-                    .unwrap_or_else(|_| {
-                        if tag_type.as_ref() == "AgQuickCollectionTagKind" {
-                            "Quick Collection"
-                        } else {
-                            ""
-                        }.to_owned()
-                    });
+                let name: String = row.get(1).unwrap_or_else(|_| {
+                    if tag_type.as_ref() == "AgQuickCollectionTagKind" {
+                        "Quick Collection"
+                    } else {
+                        ""
+                    }
+                    .to_owned()
+                });
                 match tag_type.as_ref() {
-                    "AgQuickCollectionTagKind" |
-                    "AgCollectionTagKind" =>
-                        Ok(Collection {
-                            id: row.get(0)?,
-                            name,
-                            parent: row.get(2).unwrap_or(0),
-                            system_only: matches!(tag_type.as_ref(), "AgQuickCollectionTagKind"),
-                            content: None,
-                        }),
-                    _ => Err(crate::Error::Skip)
-
+                    "AgQuickCollectionTagKind" | "AgCollectionTagKind" => Ok(Collection {
+                        id: row.get(0)?,
+                        name,
+                        parent: row.get(2).unwrap_or(0),
+                        system_only: matches!(tag_type.as_ref(), "AgQuickCollectionTagKind"),
+                        content: None,
+                    }),
+                    _ => Err(crate::Error::Skip),
                 }
             }
-            _ => Err(crate::Error::UnsupportedVersion)
+            _ => Err(crate::Error::UnsupportedVersion),
         }
     }
 
     fn read_db_tables(version: CatalogVersion) -> &'static str {
         match version {
-            CatalogVersion::Lr4 |
-            CatalogVersion::Lr6 =>
-                "AgLibraryCollection",
-            CatalogVersion::Lr2 =>
-                "AgLibraryTag",
-            _ => ""
+            CatalogVersion::Lr4 | CatalogVersion::Lr6 => "AgLibraryCollection",
+            CatalogVersion::Lr2 => "AgLibraryTag",
+            _ => "",
         }
     }
 
     fn read_db_columns(version: CatalogVersion) -> &'static str {
         match version {
-            CatalogVersion::Lr4 |
-            CatalogVersion::Lr6 =>
-                "id_local,genealogy,name,parent,systemOnly",
-            CatalogVersion::Lr2 =>
-                "id_local,name,parent,kindName",
-            _ => ""
+            CatalogVersion::Lr4 | CatalogVersion::Lr6 => {
+                "id_local,genealogy,name,parent,systemOnly"
+            }
+            CatalogVersion::Lr2 => "id_local,name,parent,kindName",
+            _ => "",
         }
     }
 }

@@ -28,7 +28,7 @@ pub enum Error {
     /// Unsupported catalog version
     UnsupportedVersion,
     /// Sql Error
-    Sql(rusqlite::Error)
+    Sql(rusqlite::Error),
 }
 
 impl From<rusqlite::Error> for Error {
