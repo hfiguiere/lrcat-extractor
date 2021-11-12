@@ -4,11 +4,42 @@
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-//! lron stand for Lightroom Object Notation
-//! Some sort of JSON specific to Lightroom
+//! lron stands for Lightroom Object Notation, specific to Lightroom
+//! that is found throughout the catalog database to store abtrary bu
+//! structured data.
+//!
+//! lron looks like plist (before XML) or JSON, but doesn't match
+//! either.
+//!
+//! Note: I couldn't figure out what this format was called, so I
+//! couldn't reuse an existing parser. If you have a better idea,
+//! please, let me know.
+//!
+//! It has the form
+//! ```json
+//! name = {
+//!   object = {
+//!     x = 1.3,
+//!     string = "some text",
+//!   },
+//! }
+//! ```
+//!
+//! The text is parsed using peg.
+//!
+//! You obtain the expression from the text by the following:
+//! ```
+//! use lrcat::lron;
+//!
+//! let lron_text = "name = {}"; // load the text in the string
+//!
+//! if let Ok(object) = lron::Object::from_string(lron_text) {
+//!     // do your stuff with it
+//! }
+//! ```
 
-/// Value for the object
-#[derive(Debug)]
+/// Lron Value
+#[derive(Debug, PartialEq)]
 pub enum Value {
     Dict(Vec<Object>),
     Str(String),
@@ -18,15 +49,15 @@ pub enum Value {
     Bool(bool),
 }
 
-/// The key/value pair.
-#[derive(Debug)]
+/// A key/value pair.
+#[derive(Debug, PartialEq)]
 pub struct Pair {
     pub key: String,
     pub value: Value,
 }
 
-/// Object
-#[derive(Debug)]
+/// Lron Object
+#[derive(Debug, PartialEq)]
 pub enum Object {
     Dict(Vec<Object>),
     Pair(Pair),
@@ -35,9 +66,12 @@ pub enum Object {
     Int(i64),
 }
 
+/// Alias result type for parsing a Lron object.
+type Result<T> = std::result::Result<T, peg::error::ParseError<peg::str::LineCol>>;
+
 impl Object {
     /// Create an object from a string
-    pub fn from_string(s: &str) -> Result<Object, peg::error::ParseError<peg::str::LineCol>> {
+    pub fn from_string(s: &str) -> Result<Object> {
         lron::root(s)
     }
 }
@@ -113,7 +147,31 @@ fn test_parser() {
     let r = Object::from_string(DATA);
 
     assert!(r.is_ok());
-    if let Some(o) = r.ok() {
-        println!("{:?}", o);
+    let o = r.unwrap();
+
+    println!("{:?}", o);
+    assert!(matches!(o, Object::Pair(_)));
+    if let Object::Pair(ref p) = o {
+        assert_eq!(p.key, "s");
+        assert!(matches!(p.value, Value::Dict(_)));
+
+        if let Value::Dict(ref d) = p.value {
+            assert_eq!(d.len(), 2);
+            assert!(matches!(d[0], Object::Dict(_)));
+            if let Object::Dict(ref d) = d[0] {
+                assert_eq!(d.len(), 4);
+                assert!(matches!(d[0], Object::Pair(_)));
+                assert!(matches!(d[1], Object::Pair(_)));
+                assert!(matches!(d[2], Object::Pair(_)));
+                assert!(matches!(d[3], Object::Pair(_)));
+            }
+            assert!(matches!(d[1], Object::Pair(_)));
+            if let Object::Pair(ref p) = d[1] {
+                assert_eq!(p.key, "combine");
+                assert_eq!(p.value, Value::Str("intersect".to_owned()));
+            }
+        }
+    } else {
+        assert!(false);
     }
 }

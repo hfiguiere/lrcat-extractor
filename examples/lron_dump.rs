@@ -36,9 +36,11 @@ fn main() {
         return;
     }
 
-    for filename in args.iter() {
-        if dump_lron(filename).is_err() {
-            println!("Error dumping lron");
+    let mut iter = args.iter();
+    iter.next();
+    for filename in iter {
+        if let Err(err) = dump_lron(filename) {
+            println!("Error dumping lron: {} {}", filename, err);
         }
     }
 }
