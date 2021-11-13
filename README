@@ -10,10 +10,40 @@ Requires:
 - Rust (1.29)
 - cargo to build
 
+The is a crate (library) meant to be used by other applications. Its
+goal is to abstract the format away into an API that can be used to
+import into an application.
+
 Building
 --------
 
+This is meant to be used by another application, so you need to add
+to your `Cargo.toml` the crate:
+
+`lrcat-extractor = 0.1.0`
+
+To build the crate, simply:
+
 $ cargo build
+
+The crate comes with a dumper utility, that's used mostly for
+debugging. It is hidden behind a "feature".
+
+$ cargo run --features=binaries
+
+Using
+-----
+
+```Rust
+let mut catalog = Catalog::new(&path_to_catalog);
+if catalog.open() {
+    // check the catalog is the right version
+    if !catalog.catalog_version.is_supported() {
+        println!("Unsupported catalog version");
+        return;
+    }
+}
+```
 
 License
 -------
