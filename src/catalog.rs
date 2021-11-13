@@ -151,18 +151,22 @@ impl Catalog {
 
     /// Generic object loader leveraging the FromDb protocol
     fn load_objects<T: FromDb>(conn: &Connection, catalog_version: CatalogVersion) -> Vec<T> {
-        let query = format!(
+        let mut query = format!(
             "SELECT {} FROM {}",
             T::read_db_columns(catalog_version),
             T::read_db_tables(catalog_version)
         );
+        let where_join = T::read_join_where(catalog_version);
+        if !where_join.is_empty() {
+            query += &format!(" WHERE {}", where_join);
+        }
         if let Ok(mut stmt) = conn.prepare(&query) {
             if let Ok(rows) =
                 stmt.query_and_then(params![], |row| T::read_from(catalog_version, row))
             {
                 return rows
                     .into_iter()
-                    .filter(|obj| obj.is_ok())
+                    .filter(|ref obj| obj.is_ok())
                     .map(|obj| obj.unwrap())
                     .collect();
             }

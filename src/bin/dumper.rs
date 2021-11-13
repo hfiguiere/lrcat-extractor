@@ -217,22 +217,25 @@ fn dump_libfiles(libfiles: &[LibraryFile]) {
 
 fn dump_images(images: &[Image]) {
     println!("Images");
-    println!("+---------+--------------------------------------+---------+--------+-------+----+");
-    println!("| id      | uuid                                 | root    | format | or    | P  |");
-    println!("+---------+--------------------------------------+---------+--------+-------+----+");
+    println!("+---------+--------------------------------------+---------+--------+-------+----+-----------");
+    println!(
+        "| id      | uuid                                 | root    | format | or    | P  | xmp "
+    );
+    println!("+---------+--------------------------------------+---------+--------+-------+----+-----------");
     for image in images {
         println!(
-            "| {:>7} | {} | {:>7} | {:<6} | {:<2}({}) | {:>2} |",
+            "| {:>7} | {} | {:>7} | {:<6} | {:<2}({}) | {:>2} | {} bytes ",
             image.id(),
             image.uuid(),
             image.root_file,
             image.file_format,
             image.orientation.as_ref().unwrap_or(&String::new()),
             image.exif_orientation(),
-            image.pick
+            image.pick,
+            image.xmp.len(),
         );
     }
-    println!("+---------+--------------------------------------+---------+--------+-------+----+");
+    println!("+---------+--------------------------------------+---------+--------+-------+----+-----------");
 }
 
 fn dump_collections(collections: &[Collection]) {

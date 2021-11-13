@@ -18,4 +18,9 @@ pub trait FromDb: Sized {
     fn read_db_tables(version: CatalogVersion) -> &'static str;
     /// DB columns used in select query.
     fn read_db_columns(version: CatalogVersion) -> &'static str;
+    /// WHERE clause for joining tables (doesn't include `WHERE`)
+    /// Default is empty
+    fn read_join_where(_version: CatalogVersion) -> &'static str {
+        ""
+    }
 }

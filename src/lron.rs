@@ -44,9 +44,26 @@ pub enum Value {
     Dict(Vec<Object>),
     Str(String),
     ZStr(String),
-    Int(i64),
+    Int(i32),
     Float(f64),
     Bool(bool),
+}
+
+impl Value {
+    /// Try to convert the value into a number of type T.  This is
+    /// because number are untyped in Lron, and the parser will manage
+    /// float or int.  Instead of having a generic Number type, it's
+    /// better this way.
+    pub fn to_number<T>(&self) -> Option<T>
+    where
+        T: std::convert::From<i32> + std::convert::From<f64>,
+    {
+        match *self {
+            Self::Int(i) => Some(i.into()),
+            Self::Float(f) => Some(f.into()),
+            _ => None,
+        }
+    }
 }
 
 /// A key/value pair.
@@ -63,7 +80,7 @@ pub enum Object {
     Pair(Pair),
     Str(String),
     ZStr(String),
-    Int(i64),
+    Int(i32),
 }
 
 /// Alias result type for parsing a Lron object.
@@ -111,8 +128,8 @@ rule value() -> Value
         a:array() { Value::Dict(a) } /
         z:zstr() { Value::ZStr(z) }
 
-rule int() -> i64
-        = n:$("-"? ['0'..='9']+) !"." { i64::from_str(n).unwrap() } / expected!("integer")
+rule int() -> i32
+        = n:$("-"? ['0'..='9']+) !"." { i32::from_str(n).unwrap() } / expected!("integer")
 
 rule bool() -> bool
         = "true" { true } / "false" { false }

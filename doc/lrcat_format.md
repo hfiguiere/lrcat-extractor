@@ -103,7 +103,7 @@ AgLibraryCollectionContent:
 
 ## Images
 
-Adobe_Images: image. This doesn't represent physical files.
+Adobe_images: image. This doesn't represent physical files.
 
 * id_local: local id
 * id_global: uuid
@@ -124,6 +124,25 @@ Adobe_Images: image. This doesn't represent physical files.
 * masterImage: id of master if this is a copy. NULL otherwise.
 * copyName: the name of the virtual copy. masterImage not NULL.
 
+Adobe_imageProperties: other properties for images.
+
+* id_local: local id
+* id_global: uuid
+* image: id_local in the `Adobe_images` table.
+* propertiesString: some properties in lron format. Seems to cover:
+  - loupe focus point
+    * `loupeFocusPoint`
+      * `_ag_className = "AgPoint"
+      * `x` and `y`: floating point 0..1.0
+  - crop aspect ratio:
+    * `cropAspectH`
+    * `cropAspectW`
+  - default crop (floating point values) :
+    * `defaultCropBottom`
+    * `defaultCropLeft`
+    * `defaultCropRight`
+    * `defaultCropTop`
+
 AgLibraryFile: physical files.
 
 * id_local: local id
@@ -143,18 +162,18 @@ Adobe_AdditionalMetadata: extra metadata for images
 * id_local: local id
 * id_global: uuid
 * additionalInfoSet
-* emeddedXmp
-* exeternalXmpIsDirty
-* image: local id of the `Adobe_images`
+* emeddedXmp: XMP is stored in file (vs in sidecar)
+* externalXmpIsDirty: 0 or 1
+* image: local id in the `Adobe_images` table.
 * incrementalWhiteBalance
-* internalXmpDigest: (md5 of XMP in DB?)
-* isRawFile: 1 if RAW, or 0.
-* lastSynchronizedHash
+* internalXmpDigest: (md5 or sha1 of XMP in DB?)
+* isRawFile: 1 if RAW, or 0 (likely using sidecar).
+* lastSynchronizedHash: (sha1?)
 * lastSyncrhonizedTimestamp
 * metadataPresetID: UUID of the metadata preset applied (?)
 * metadataVersion: seems to be 4.0 in Lr2, Lr4 and Lr6.
 * monochrome: 1 if monochrome?
-* xmp: the XMP text
+* xmp: the XMP packet text
 
 ## Collections
 
