@@ -5,11 +5,11 @@
 */
 
 //! lron stands for Lightroom Object Notation, specific to Lightroom
-//! that is found throughout the catalog database to store abtrary bu
-//! structured data.
+//! that is found throughout the catalog database to store arbitrary
+//! but structured data.
 //!
 //! lron looks like plist (before XML) or JSON, but doesn't match
-//! either.
+//! either syntax.
 //!
 //! Note: I couldn't figure out what this format was called, so I
 //! couldn't reuse an existing parser. If you have a better idea,
