@@ -20,7 +20,7 @@ Building
 This is meant to be used by another application, so you need to add
 to your `Cargo.toml` the crate:
 
-`lrcat-extractor = 0.1.0`
+`lrcat-extractor = 0.2.0`
 
 To build the crate, simply:
 
@@ -44,6 +44,10 @@ if catalog.open() {
     }
 }
 ```
+
+See the documentation hosted at https://docs.rs/lrcat-extractor/
+
+You can also use `cargo doc` to generate it locally.
 
 License
 -------

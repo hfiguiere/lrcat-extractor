@@ -1,11 +1,12 @@
 [package]
 name = "lrcat-extractor"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Hubert Figuière <hub@figuiere.net>"]
 edition = "2018"
 description = "Extract data from Adobe Lightroom™ catalogs."
 license = "MPL-2.0"
 repository = "https://github.com/hfiguiere/lrcat-extractor"
+documentation = "https://docs.rs/lrcat-extractor/"
 
 [dependencies]
 chrono = "0.4.0"
