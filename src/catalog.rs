@@ -249,4 +249,42 @@ impl Catalog {
         }
         &self.collections
     }
+
+    /// Get the collections. This assume the collection has been loaded first.
+    /// This allow non-mutable borrowing that would be caused by `load_collections()`.
+    pub fn collections(&self) ->  &Vec<Collection> {
+        &self.collections
+    }
+
+    /// Lr2 use "Tags".
+    const LR2_QUERY: &'static str = "SELECT image FROM AgLibraryTagImage WHERE tag = ?1 AND tagKind = \"AgCollectionTagKind\"";
+    /// Lr4 and Lr6 store the relation in `AgLibraryCollectionImage`
+    const LR4_QUERY: &'static str = "SELECT image FROM AgLibraryCollectionImage WHERE collection = ?1";
+
+    /// Collect images from collections using a specific query.
+    fn images_for_collection_with_query(&self, query: &str, collection_id: LrId) -> super::Result<Vec<LrId>> {
+        let conn = self.dbconn.as_ref().unwrap();
+        let mut stmt = conn.prepare(query)?;
+        let rows = stmt.query_map(&[&collection_id], |row| row.get::<usize, i64>(0))?;
+        let mut ids = Vec::new();
+        for id in rows {
+            ids.push(id?);
+        }
+        Ok(ids)
+    }
+
+    /// Return the of images in the given collection.
+    /// Not to be confused with Content.
+    pub fn images_for_collection(&self, collection_id: LrId) -> super::Result<Vec<LrId>> {
+        match self.catalog_version {
+            CatalogVersion::Lr2 => {
+                self.images_for_collection_with_query(Self::LR2_QUERY, collection_id)
+            }
+            CatalogVersion::Lr4 |
+            CatalogVersion::Lr6 => {
+                self.images_for_collection_with_query(Self::LR4_QUERY, collection_id)
+            }
+            _ => Err(super::Error::UnsupportedVersion)
+        }
+    }
 }
