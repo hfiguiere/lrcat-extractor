@@ -201,24 +201,24 @@ impl LrObject for Image {
 impl FromDb for Image {
     fn read_from(_version: CatalogVersion, row: &Row) -> crate::Result<Self> {
         let properties = row
-            .get::<&str, String>("propertiesString")
+            .get::<usize, String>(13)
             .ok()
             .and_then(|v| lron::Object::from_string(&v).ok())
             .map(Properties::from);
         Ok(Image {
-            id: row.get("id_local")?,
-            uuid: row.get("id_global")?,
-            master_image: row.get("masterImage").ok(),
-            rating: row.get("rating").ok(),
-            root_file: row.get("rootFile")?,
-            file_format: row.get("fileFormat")?,
-            pick: row.get("pick")?,
-            orientation: row.get("orientation").ok(),
-            capture_time: row.get("captureTime")?,
-            copy_name: row.get("copyName").ok(),
-            xmp: row.get("xmp")?,
-            xmp_embedded: row.get("embeddedXmp")?,
-            xmp_external_dirty: row.get("externalXmpIsDirty")?,
+            id: row.get(0)?,
+            uuid: row.get(1)?,
+            master_image: row.get(2).ok(),
+            rating: row.get(3).ok(),
+            root_file: row.get(4)?,
+            file_format: row.get(5)?,
+            pick: row.get(6)?,
+            orientation: row.get(7).ok(),
+            capture_time: row.get(8)?,
+            copy_name: row.get(9).ok(),
+            xmp: row.get(10)?,
+            xmp_embedded: row.get(11)?,
+            xmp_external_dirty: row.get(12)?,
             properties,
         })
     }
