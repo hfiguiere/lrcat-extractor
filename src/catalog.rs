@@ -41,7 +41,7 @@ pub enum CatalogVersion {
 impl CatalogVersion {
     /// Return if we support this catalog version
     pub fn is_supported(&self) -> bool {
-        (*self == Self::Lr2) || (*self == Self::Lr4) || (*self == Self::Lr6)
+        (*self == Self::Lr2) || (*self == Self::Lr3) || (*self == Self::Lr4) || (*self == Self::Lr6)
     }
 }
 
@@ -197,6 +197,12 @@ impl Catalog {
         &self.keywords
     }
 
+    /// Get the keywords. This assume the keywords have been loaded first.
+    /// This allow non-mutable borrowing that would be caused by `load_keywords()`.
+    pub fn keywords(&self) -> &BTreeMap<LrId, Keyword> {
+        &self.keywords
+    }
+
     /// Load folders.
     pub fn load_folders(&mut self) -> &Folders {
         if self.folders.is_empty() {
@@ -213,6 +219,12 @@ impl Catalog {
         &self.folders
     }
 
+    /// Get the folders. This assume the folders have been loaded first.
+    /// This allow non-mutable borrowing that would be caused by `load_folders()`.
+    pub fn folders(&self) ->  &Folders {
+        &self.folders
+    }
+
     /// Load library files (that back images)
     pub fn load_library_files(&mut self) -> &Vec<LibraryFile> {
         if self.libfiles.is_empty() {
@@ -224,6 +236,12 @@ impl Catalog {
         &self.libfiles
     }
 
+    /// Get the libfiles. This assume the libfiles have been loaded first.
+    /// This allow non-mutable borrowing that would be caused by `load_libfiles()`.
+    pub fn libfiles(&self) ->  &Vec<LibraryFile> {
+        &self.libfiles
+    }
+
     /// Load images.
     pub fn load_images(&mut self) -> &Vec<Image> {
         if self.images.is_empty() {
@@ -232,6 +250,12 @@ impl Catalog {
                 self.images.append(&mut result);
             }
         }
+        &self.images
+    }
+
+    /// Get the images. This assume the images have been loaded first.
+    /// This allow non-mutable borrowing that would be caused by `load_images()`.
+    pub fn images(&self) ->  &Vec<Image> {
         &self.images
     }
 
@@ -250,7 +274,7 @@ impl Catalog {
         &self.collections
     }
 
-    /// Get the collections. This assume the collection has been loaded first.
+    /// Get the collections. This assume the collections have been loaded first.
     /// This allow non-mutable borrowing that would be caused by `load_collections()`.
     pub fn collections(&self) ->  &Vec<Collection> {
         &self.collections
@@ -258,7 +282,7 @@ impl Catalog {
 
     /// Lr2 use "Tags".
     const LR2_QUERY: &'static str = "SELECT image FROM AgLibraryTagImage WHERE tag = ?1 AND tagKind = \"AgCollectionTagKind\"";
-    /// Lr4 and Lr6 store the relation in `AgLibraryCollectionImage`
+    /// Lr3, Lr4 and Lr6 store the relation in `AgLibraryCollectionImage`
     const LR4_QUERY: &'static str = "SELECT image FROM AgLibraryCollectionImage WHERE collection = ?1";
 
     /// Collect images from collections using a specific query.
@@ -280,6 +304,7 @@ impl Catalog {
             CatalogVersion::Lr2 => {
                 self.images_for_collection_with_query(Self::LR2_QUERY, collection_id)
             }
+            CatalogVersion::Lr3 |
             CatalogVersion::Lr4 |
             CatalogVersion::Lr6 => {
                 self.images_for_collection_with_query(Self::LR4_QUERY, collection_id)

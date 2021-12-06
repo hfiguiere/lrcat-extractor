@@ -55,7 +55,7 @@ AgLibraryKeywordImage: keyword relation with images
 
 * id_local: local id
 * image: associated image `Adobe_images`
-* tag: addociated keyword `AgLibraryKeyword`
+* tag: associated keyword `AgLibraryKeyword`
 
 ## Folders
 
@@ -177,7 +177,7 @@ Adobe_AdditionalMetadata: extra metadata for images
 
 ## Collections
 
-AgLibraryCollection (Lr4 and Lr6) - collections definitions
+AgLibraryCollection (Lr3, Lr4 and Lr6) - collections definitions
 
 * id_local: local id
 * creationId: "type" of collection. Some of the possible values:
@@ -194,7 +194,7 @@ AgLibraryCollection (Lr4 and Lr6) - collections definitions
 * parent: NULL is id_local of parent
 * systemOnly: (seems to apply to the quick collection and *.unsaved)
 
-AgLibraryCollectionImage (Lr4 and Lr6) - image to collection relation
+AgLibraryCollectionImage (Lr3, Lr4 and Lr6) - image to collection relation
 
 * id_local: local id
 * collection: local id of the collection
