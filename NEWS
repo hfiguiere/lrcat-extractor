@@ -1,3 +1,16 @@
+0.2.0 - 9 December 2021
+
+- Added `Catalog::images_for_collection()` to get the list of images
+  belonging to a collection.
+- Allow immutable access to Catalog object once loaded:
+  - `Catalog::images()`
+  - `Catalog::keywords()`
+  - `Catalog::folders()`
+  - `Catalog::libfiles()`
+  - `Catalog::collections()`
+- Possible support for Lr3 catalogs (largely untested).
+- Performance improvements.
+
 0.1.0 - 12 November 2021
 
 - Initial release
