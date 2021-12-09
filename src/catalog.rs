@@ -221,7 +221,7 @@ impl Catalog {
 
     /// Get the folders. This assume the folders have been loaded first.
     /// This allow non-mutable borrowing that would be caused by `load_folders()`.
-    pub fn folders(&self) ->  &Folders {
+    pub fn folders(&self) -> &Folders {
         &self.folders
     }
 
@@ -238,7 +238,7 @@ impl Catalog {
 
     /// Get the libfiles. This assume the libfiles have been loaded first.
     /// This allow non-mutable borrowing that would be caused by `load_libfiles()`.
-    pub fn libfiles(&self) ->  &Vec<LibraryFile> {
+    pub fn libfiles(&self) -> &Vec<LibraryFile> {
         &self.libfiles
     }
 
@@ -255,7 +255,7 @@ impl Catalog {
 
     /// Get the images. This assume the images have been loaded first.
     /// This allow non-mutable borrowing that would be caused by `load_images()`.
-    pub fn images(&self) ->  &Vec<Image> {
+    pub fn images(&self) -> &Vec<Image> {
         &self.images
     }
 
@@ -276,17 +276,23 @@ impl Catalog {
 
     /// Get the collections. This assume the collections have been loaded first.
     /// This allow non-mutable borrowing that would be caused by `load_collections()`.
-    pub fn collections(&self) ->  &Vec<Collection> {
+    pub fn collections(&self) -> &Vec<Collection> {
         &self.collections
     }
 
     /// Lr2 use "Tags".
-    const LR2_QUERY: &'static str = "SELECT image FROM AgLibraryTagImage WHERE tag = ?1 AND tagKind = \"AgCollectionTagKind\"";
+    const LR2_QUERY: &'static str =
+        "SELECT image FROM AgLibraryTagImage WHERE tag = ?1 AND tagKind = \"AgCollectionTagKind\"";
     /// Lr3, Lr4 and Lr6 store the relation in `AgLibraryCollectionImage`
-    const LR4_QUERY: &'static str = "SELECT image FROM AgLibraryCollectionImage WHERE collection = ?1";
+    const LR4_QUERY: &'static str =
+        "SELECT image FROM AgLibraryCollectionImage WHERE collection = ?1";
 
     /// Collect images from collections using a specific query.
-    fn images_for_collection_with_query(&self, query: &str, collection_id: LrId) -> super::Result<Vec<LrId>> {
+    fn images_for_collection_with_query(
+        &self,
+        query: &str,
+        collection_id: LrId,
+    ) -> super::Result<Vec<LrId>> {
         let conn = self.dbconn.as_ref().unwrap();
         let mut stmt = conn.prepare(query)?;
         let rows = stmt.query_map(&[&collection_id], |row| row.get::<usize, i64>(0))?;
@@ -304,12 +310,10 @@ impl Catalog {
             CatalogVersion::Lr2 => {
                 self.images_for_collection_with_query(Self::LR2_QUERY, collection_id)
             }
-            CatalogVersion::Lr3 |
-            CatalogVersion::Lr4 |
-            CatalogVersion::Lr6 => {
+            CatalogVersion::Lr3 | CatalogVersion::Lr4 | CatalogVersion::Lr6 => {
                 self.images_for_collection_with_query(Self::LR4_QUERY, collection_id)
             }
-            _ => Err(super::Error::UnsupportedVersion)
+            _ => Err(super::Error::UnsupportedVersion),
         }
     }
 }
