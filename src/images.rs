@@ -53,7 +53,7 @@ impl Properties {
     }
 
     #[allow(clippy::unnecessary_unwrap)]
-    fn properties(value: &[lron::Object]) -> Self {
+    fn properties_from(value: &[lron::Object]) -> Self {
         use crate::lron::{Object, Value};
 
         let mut props = Properties::default();
@@ -127,7 +127,7 @@ impl From<lron::Object> for Properties {
             Object::Pair(ref s) => {
                 if &s.key == "properties" {
                     match s.value {
-                        Value::Dict(ref dict) => Self::properties(dict),
+                        Value::Dict(ref dict) => Self::properties_from(dict),
                         _ => Properties::default(),
                     }
                 } else {
