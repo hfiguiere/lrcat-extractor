@@ -10,15 +10,15 @@ use rusqlite::Connection;
 
 use crate::lron;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum SortDirection {
     Ascending,
     Descending,
     Unknown,
 }
 
-#[derive(Default)]
 /// Represent the content view. Applies to `Collection` and `Folder`
+#[derive(Default, Clone)]
 pub struct Content {
     /// Filter
     pub filter: Option<String>,

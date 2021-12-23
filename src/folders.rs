@@ -13,6 +13,7 @@ use crate::lrobject::{LrId, LrObject};
 
 /// A folder define the container for `LibraryFiles`
 /// They are all attached to a `RootFolder`
+#[derive(Clone)]
 pub struct Folder {
     id: LrId,
     uuid: String,
@@ -67,6 +68,7 @@ impl Folder {
 
 /// Represent the ancestor of `Folder` and map to
 /// an absolute path
+#[derive(Clone)]
 pub struct RootFolder {
     id: LrId,
     uuid: String,
@@ -122,7 +124,7 @@ impl FromDb for RootFolder {
 }
 
 /// Represent the all the folders
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct Folders {
     /// The `RootFolder` list
     pub roots: Vec<RootFolder>,

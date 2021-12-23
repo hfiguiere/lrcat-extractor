@@ -11,6 +11,7 @@ use crate::fromdb::FromDb;
 use crate::lrobject::{LrId, LrObject};
 
 /// A Lightroom keyword.
+#[derive(Clone)]
 pub struct Keyword {
     /// Local id
     id: LrId,

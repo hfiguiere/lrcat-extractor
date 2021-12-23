@@ -39,7 +39,7 @@
 //! ```
 
 /// Lron Value
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value {
     Dict(Vec<Object>),
     Str(String),
@@ -67,14 +67,14 @@ impl Value {
 }
 
 /// A key/value pair.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Pair {
     pub key: String,
     pub value: Value,
 }
 
 /// Lron Object
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Object {
     Dict(Vec<Object>),
     Pair(Pair),
