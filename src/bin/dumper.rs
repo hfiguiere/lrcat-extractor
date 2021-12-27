@@ -21,13 +21,14 @@ use lrcat::{
 
 const USAGE: &str = "
 Usage:
-  dumper <command> ([--all] | [--collections] [--libfiles] [--images] [--folders] [--keywords]) <path>
+  dumper <command> ([--all] | [--collections] [--libfiles] [--images] [--folders] [--root] [--keywords]) <path>
 
 Options:
     --all          Select all objects
     --collections  Select only collections
     --libfiles     Select only library files
     --images       Select only images
+    --root         Select only root folders
     --folders      Select only folders
     --keywords     Select only keywords
 
@@ -45,6 +46,7 @@ struct Args {
     flag_libfiles: bool,
     flag_images: bool,
     flag_folders: bool,
+    flag_root: bool,
     flag_keywords: bool,
 }
 
@@ -97,6 +99,9 @@ fn process_dump(args: &Args) {
 
         {
             let folders = catalog.load_folders();
+            if args.flag_all || args.flag_root {
+                dump_root_folders(&folders);
+            }
             if args.flag_all || args.flag_folders {
                 dump_folders(&folders);
             }
@@ -162,7 +167,7 @@ fn dump_keywords(root: LrId, keywords: &BTreeMap<i64, Keyword>, tree: &KeywordTr
     );
 }
 
-fn dump_folders(folders: &Folders) {
+fn dump_root_folders(folders: &Folders) {
     println!("Root Folders");
     println!("+---------+--------------------------------------+------------------+----------------------------");
     println!("| id      | uuid                                 | name             | absolute path");
@@ -176,6 +181,10 @@ fn dump_folders(folders: &Folders) {
             root.absolute_path
         );
     }
+    println!("+---------+--------------------------------------+------------------+----------------------------");
+}
+
+fn dump_folders(folders: &Folders) {
     println!("+---------+--------------------------------------+------------------+----------------------------");
     println!("Folders");
     println!("+---------+--------------------------------------+--------+-----------------------------+----------");
