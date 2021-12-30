@@ -1,6 +1,8 @@
-0.2.1 -
+0.2.1 - 30 December 2021
 
 - Added `Clone` derive to most type.
+- Dumper splits folders and root folders.
+- Folders::find_root_folder() is public
 
 0.2.0 - 9 December 2021
 
