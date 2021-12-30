@@ -163,7 +163,7 @@ impl Folders {
     }
 
     /// Return the eventual `RootFolder` with the id.
-    fn find_root_folder(&self, id: LrId) -> Option<&RootFolder> {
+    pub fn find_root_folder(&self, id: LrId) -> Option<&RootFolder> {
         for root in &self.roots {
             if root.id() == id {
                 return Some(root);
