@@ -123,7 +123,7 @@ impl FromDb for RootFolder {
     }
 }
 
-/// Represent the all the folders
+/// Represent all the folders
 #[derive(Clone, Default)]
 pub struct Folders {
     /// The `RootFolder` list
