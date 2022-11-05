@@ -24,7 +24,7 @@ const LR4_VERSION: i32 = 4;
 const LR6_VERSION: i32 = 6;
 
 /// Catalog version.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CatalogVersion {
     /// Unknown version
     Unknown,
@@ -112,7 +112,7 @@ impl Catalog {
     {
         let conn = self.dbconn.as_ref()?;
         if let Ok(mut stmt) = conn.prepare("SELECT value FROM Adobe_variablesTable WHERE name=?1") {
-            let mut rows = stmt.query(&[&name]).unwrap();
+            let mut rows = stmt.query([&name]).unwrap();
             if let Ok(Some(row)) = rows.next() {
                 return row.get(0).ok();
             }
@@ -166,8 +166,7 @@ impl Catalog {
             {
                 return rows
                     .into_iter()
-                    .filter(|obj| obj.is_ok())
-                    .map(|obj| obj.unwrap())
+                    .filter_map(|obj| obj.ok())
                     .collect();
             }
         }
@@ -295,7 +294,7 @@ impl Catalog {
     ) -> super::Result<Vec<LrId>> {
         let conn = self.dbconn.as_ref().unwrap();
         let mut stmt = conn.prepare(query)?;
-        let rows = stmt.query_map(&[&collection_id], |row| row.get::<usize, i64>(0))?;
+        let rows = stmt.query_map([&collection_id], |row| row.get::<usize, i64>(0))?;
         let mut ids = Vec::new();
         for id in rows {
             ids.push(id?);

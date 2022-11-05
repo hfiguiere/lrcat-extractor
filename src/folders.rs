@@ -164,12 +164,7 @@ impl Folders {
 
     /// Return the eventual `RootFolder` with the id.
     pub fn find_root_folder(&self, id: LrId) -> Option<&RootFolder> {
-        for root in &self.roots {
-            if root.id() == id {
-                return Some(root);
-            }
-        }
-        None
+        self.roots.iter().find(|&root| root.id() == id)
     }
 
     /// Resolve the folder path by providing an absolute path

@@ -93,36 +93,36 @@ fn process_dump(args: &Args) {
             println!("\tKeywords count: {}", keywords.len());
 
             if args.flag_all || args.flag_keywords {
-                dump_keywords(root_keyword_id, &keywords, &keywordtree);
+                dump_keywords(root_keyword_id, keywords, &keywordtree);
             }
         }
 
         {
             let folders = catalog.load_folders();
             if args.flag_all || args.flag_root {
-                dump_root_folders(&folders);
+                dump_root_folders(folders);
             }
             if args.flag_all || args.flag_folders {
-                dump_folders(&folders);
+                dump_folders(folders);
             }
         }
 
         {
             let libfiles = catalog.load_library_files();
             if args.flag_all || args.flag_libfiles {
-                dump_libfiles(&libfiles);
+                dump_libfiles(libfiles);
             }
         }
         {
             let images = catalog.load_images();
             if args.flag_all || args.flag_images {
-                dump_images(&images);
+                dump_images(images);
             }
         }
         {
             let collections = catalog.load_collections();
             if args.flag_all || args.flag_collections {
-                dump_collections(&collections);
+                dump_collections(collections);
             }
         }
     }

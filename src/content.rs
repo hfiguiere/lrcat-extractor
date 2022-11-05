@@ -75,7 +75,7 @@ impl Content {
             table, container_col
         );
         if let Ok(mut stmt) = conn.prepare(&query) {
-            let mut rows = stmt.query(&[&container_id]).unwrap();
+            let mut rows = stmt.query([&container_id]).unwrap();
             while let Ok(Some(row)) = rows.next() {
                 // We ignore the result.
                 // XXX shall we display a warning on error? likely
