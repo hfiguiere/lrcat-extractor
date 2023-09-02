@@ -45,48 +45,20 @@ pub struct Rect {
 }
 
 /// Error from the crate, agreggate with sqlite errors.
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("LrCat: Skip.")]
     /// Skip the item (when reading from Db)
     Skip,
+    #[error("LrCat: Unsupported catalog version.")]
     /// Unsupported catalog version
     UnsupportedVersion,
+    #[error("LrCat: SQL error: {0}")]
     /// Sql Error
-    Sql(rusqlite::Error),
+    Sql(#[from] rusqlite::Error),
+    #[error("LrCat: Lron parsing error: {0}")]
     /// Lron parsing error
-    Lron(peg::error::ParseError<peg::str::LineCol>),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Skip => write!(f, "LrCat: Skip."),
-            Self::UnsupportedVersion => write!(f, "LrCat: Unsupported catalog version."),
-            Self::Sql(ref e) => write!(f, "LrCat: SQL error: {}", e),
-            Self::Lron(ref e) => write!(f, "LrCat: Lron parsing error: {}", e),
-        }
-    }
-}
-impl std::error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match *self {
-            Self::Sql(ref err) => Some(err),
-            Self::Lron(ref err) => Some(err),
-            Self::Skip | Self::UnsupportedVersion => None,
-        }
-    }
-}
-
-impl From<rusqlite::Error> for Error {
-    fn from(err: rusqlite::Error) -> Self {
-        Self::Sql(err)
-    }
-}
-
-impl From<peg::error::ParseError<peg::str::LineCol>> for Error {
-    fn from(err: peg::error::ParseError<peg::str::LineCol>) -> Self {
-        Self::Lron(err)
-    }
+    Lron(#[from] peg::error::ParseError<peg::str::LineCol>),
 }
 
 /// Result type for the crate.
