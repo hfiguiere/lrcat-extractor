@@ -164,10 +164,7 @@ impl Catalog {
             if let Ok(rows) =
                 stmt.query_and_then(params![], |row| T::read_from(catalog_version, row))
             {
-                return rows
-                    .into_iter()
-                    .filter_map(|obj| obj.ok())
-                    .collect();
+                return rows.into_iter().filter_map(|obj| obj.ok()).collect();
             }
         }
         vec![]
