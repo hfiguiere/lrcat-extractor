@@ -1,0 +1,13 @@
+s = {
+         {
+         criteria = "rating",
+         operation = ">",
+         value = 0,
+         value2 = 0,
+         someOther = "anObject = {\
+key = \"lr\",\
+}\
+",
+         },
+    combine = "intersect",
+}

@@ -15,6 +15,9 @@
 //! couldn't reuse an existing parser. If you have a better idea,
 //! please, let me know.
 //!
+//! Note2: The crate [`agprefs`](https://crates.io/crates/agprefs)
+//! call it `agprefs`.
+//!
 //! It has the form
 //! ```json
 //! name = {
@@ -140,8 +143,13 @@ rule float() -> f64
 rule identifier() -> String
         = s:$(['a'..='z' | 'A'..='Z' | '0'..='9' | '_']+) { s.to_owned() } / expected!("identifier")
 
+// String escape, either literal EOL or quotes.
+rule escape() -> &'static str
+        = "\\\"" { "\"" } / "\\\n" { "\n" }
+
+// String literal can be escaped.
 rule string_literal() -> String
-        = "\"" s:$((!['"'][_])*) "\"" { s.to_owned() }
+        = "\"" s:((escape() / $(!['"'][_]))*) "\"" { s.join("") }
 
 rule zstr() -> String
         = "ZSTR" _() s:string_literal() { s }
@@ -152,21 +160,12 @@ rule _() = quiet!{[' ' | '\r' | '\n' | '\t']*}
 
 #[test]
 fn test_parser() {
-    const DATA: &'static str = "s = { \
-         { \
-         criteria = \"rating\", \
-         operation = \">\", \
-         value = 0, \
-         value2 = 0, \
-         }, \
-         combine = \"intersect\", \
-         }";
+    const DATA: &'static str = include_str!("../data/test_lron");
     let r = Object::from_string(DATA);
 
     assert!(r.is_ok());
     let o = r.unwrap();
 
-    println!("{:?}", o);
     assert!(matches!(o, Object::Pair(_)));
     if let Object::Pair(ref p) = o {
         assert_eq!(p.key, "s");
@@ -176,11 +175,23 @@ fn test_parser() {
             assert_eq!(d.len(), 2);
             assert!(matches!(d[0], Object::Dict(_)));
             if let Object::Dict(ref d) = d[0] {
-                assert_eq!(d.len(), 4);
+                assert_eq!(d.len(), 5);
                 assert!(matches!(d[0], Object::Pair(_)));
                 assert!(matches!(d[1], Object::Pair(_)));
                 assert!(matches!(d[2], Object::Pair(_)));
                 assert!(matches!(d[3], Object::Pair(_)));
+                assert!(matches!(d[4], Object::Pair(_)));
+                if let Object::Pair(ref p) = d[4] {
+                    assert_eq!(p.key, "someOther");
+                    if let Value::Str(value) = &p.value {
+                        let r2 = Object::from_string(&value);
+                        assert!(r2.is_ok());
+                    }
+                    assert_eq!(p.value, Value::Str(
+                        "anObject = {\n\
+                         key = \"lr\",\n\
+                         }\n".to_owned()));
+                }
             }
             assert!(matches!(d[1], Object::Pair(_)));
             if let Object::Pair(ref p) = d[1] {
