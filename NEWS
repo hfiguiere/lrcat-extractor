@@ -1,3 +1,11 @@
+0.4.0 - 1 September 2023
+
+- Update rusqlite to 0.29.0.
+- Update docopt to 1.1.1.
+- Use re-exported serde derive.
+- Documentation improvements.
+- Implement `PartialEq` for public types where appropriate.
+
 0.3.0 - 4 November 2022
 
 - Fix some clippy warnings
