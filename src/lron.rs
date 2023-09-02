@@ -160,7 +160,7 @@ rule _() = quiet!{[' ' | '\r' | '\n' | '\t']*}
 
 #[test]
 fn test_parser() {
-    const DATA: &'static str = include_str!("../data/test_lron");
+    const DATA: &str = include_str!("../data/test_lron");
     let r = Object::from_string(DATA);
 
     assert!(r.is_ok());
@@ -184,13 +184,18 @@ fn test_parser() {
                 if let Object::Pair(ref p) = d[4] {
                     assert_eq!(p.key, "someOther");
                     if let Value::Str(value) = &p.value {
-                        let r2 = Object::from_string(&value);
+                        let r2 = Object::from_string(value);
                         assert!(r2.is_ok());
                     }
-                    assert_eq!(p.value, Value::Str(
-                        "anObject = {\n\
+                    assert_eq!(
+                        p.value,
+                        Value::Str(
+                            "anObject = {\n\
                          key = \"lr\",\n\
-                         }\n".to_owned()));
+                         }\n"
+                            .to_owned()
+                        )
+                    );
                 }
             }
             assert!(matches!(d[1], Object::Pair(_)));
@@ -200,6 +205,6 @@ fn test_parser() {
             }
         }
     } else {
-        assert!(false);
+        unreachable!();
     }
 }
