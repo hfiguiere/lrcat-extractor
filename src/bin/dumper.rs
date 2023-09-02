@@ -4,124 +4,113 @@
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-extern crate docopt;
 extern crate lrcat;
-extern crate serde;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-use docopt::Docopt;
-use serde::Deserialize;
+use clap::{Parser, Subcommand};
 
 use lrcat::{
     Catalog, Collection, Folders, Image, Keyword, KeywordTree, LibraryFile, LrId, LrObject,
 };
 
-const USAGE: &str = "
-Usage:
-  dumper <command> ([--all] | [--collections] [--libfiles] [--images] [--folders] [--root] [--keywords]) <path>
-
-Options:
-    --all          Select all objects
-    --collections  Select only collections
-    --libfiles     Select only library files
-    --images       Select only images
-    --root         Select only root folders
-    --folders      Select only folders
-    --keywords     Select only keywords
-
-Commands are:
-    dump           Dump the objects
-    audit          Audit mode: output what we ignored
-";
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Parser)]
+#[command(version)]
 struct Args {
-    arg_command: Command,
-    arg_path: PathBuf,
-    flag_all: bool,
-    flag_collections: bool,
-    flag_libfiles: bool,
-    flag_images: bool,
-    flag_folders: bool,
-    flag_root: bool,
-    flag_keywords: bool,
+    #[command(subcommand)]
+    command: Command,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Subcommand)]
 enum Command {
-    Dump,
-    Audit,
-    Unknown(String),
+    Dump(CommandArgs),
+    Audit(CommandArgs),
+}
+
+#[derive(Debug, Parser)]
+struct CommandArgs {
+    path: PathBuf,
+    #[arg(long)]
+    all: bool,
+    #[arg(long)]
+    collections: bool,
+    #[arg(long)]
+    libfiles: bool,
+    #[arg(long)]
+    images: bool,
+    #[arg(long)]
+    folders: bool,
+    #[arg(long)]
+    root: bool,
+    #[arg(long)]
+    keywords: bool,
 }
 
 fn main() {
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.argv(std::env::args()).deserialize())
-        .unwrap_or_else(|e| e.exit());
-    {
-        match args.arg_command {
-            Command::Dump => process_dump(&args),
-            Command::Audit => process_audit(&args),
-            _ => (),
-        };
-    }
+    let args = Args::parse();
+
+    match args.command {
+        Command::Dump(_) => process_dump(&args),
+        Command::Audit(_) => process_audit(&args),
+    };
 }
 
 fn process_dump(args: &Args) {
-    let mut catalog = Catalog::new(&args.arg_path);
-    if catalog.open() {
-        catalog.load_version();
-        println!("Catalog:");
-        println!(
-            "\tVersion: {} ({:?})",
-            catalog.version, catalog.catalog_version
-        );
-        println!("\tRoot keyword id: {}", catalog.root_keyword_id);
+    if let Command::Dump(args) = &args.command {
+        let mut catalog = Catalog::new(&args.path);
+        if catalog.open() {
+            catalog.load_version();
+            println!("Catalog:");
+            println!(
+                "\tVersion: {} ({:?})",
+                catalog.version, catalog.catalog_version
+            );
+            println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
-        if !catalog.catalog_version.is_supported() {
-            println!("Unsupported catalog version");
-            return;
-        }
+            if !catalog.catalog_version.is_supported() {
+                println!("Unsupported catalog version");
+                return;
+            }
 
-        {
-            let root_keyword_id = catalog.root_keyword_id;
-            let keywordtree = catalog.load_keywords_tree();
-            let keywords = catalog.load_keywords();
-            println!("\tKeywords count: {}", keywords.len());
+            {
+                let root_keyword_id = catalog.root_keyword_id;
+                let keywordtree = catalog.load_keywords_tree();
+                let keywords = catalog.load_keywords();
+                println!("\tKeywords count: {}", keywords.len());
 
-            if args.flag_all || args.flag_keywords {
-                dump_keywords(root_keyword_id, keywords, &keywordtree);
+                if args.all || args.keywords {
+                    dump_keywords(root_keyword_id, keywords, &keywordtree);
+                }
             }
-        }
 
-        {
-            let folders = catalog.load_folders();
-            if args.flag_all || args.flag_root {
-                dump_root_folders(folders);
+            {
+                let folders = catalog.load_folders();
+                if args.all || args.root {
+                    dump_root_folders(folders);
+                }
+                if args.all || args.folders {
+                    dump_folders(folders);
+                }
             }
-            if args.flag_all || args.flag_folders {
-                dump_folders(folders);
-            }
-        }
 
-        {
-            let libfiles = catalog.load_library_files();
-            if args.flag_all || args.flag_libfiles {
-                dump_libfiles(libfiles);
+            {
+                let libfiles = catalog.load_library_files();
+                if args.all || args.libfiles {
+                    dump_libfiles(libfiles);
+                }
             }
-        }
-        {
-            let images = catalog.load_images();
-            if args.flag_all || args.flag_images {
-                dump_images(images);
+            {
+                let images = catalog.load_images();
+                if args.all || args.images {
+                    dump_images(images);
+                }
             }
-        }
-        {
-            let collections = catalog.load_collections();
-            if args.flag_all || args.flag_collections {
-                dump_collections(collections);
+            {
+                let collections = catalog.load_collections();
+                if args.all || args.collections {
+                    dump_collections(collections);
+                }
             }
         }
     }
