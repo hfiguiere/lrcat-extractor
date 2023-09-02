@@ -7,13 +7,12 @@
 extern crate docopt;
 extern crate lrcat;
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use docopt::Docopt;
+use serde::Deserialize;
 
 use lrcat::{
     Catalog, Collection, Folders, Image, Keyword, KeywordTree, LibraryFile, LrId, LrObject,
