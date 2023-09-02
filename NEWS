@@ -1,3 +1,8 @@
+0.4.1 - 2 September 2023
+
+- Support escaped strings: lots of case where the value is a string
+  that deserialize too, and caused parsing failures.
+
 0.4.0 - 1 September 2023
 
 - Update rusqlite to 0.29.0.
