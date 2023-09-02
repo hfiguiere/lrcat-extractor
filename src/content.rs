@@ -10,10 +10,14 @@ use rusqlite::Connection;
 
 use crate::lron;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+/// Sorting direction
 pub enum SortDirection {
+    /// Ascending sort
     Ascending,
+    /// Descending sort
     Descending,
+    /// Unknown value
     Unknown,
 }
 

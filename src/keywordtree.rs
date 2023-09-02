@@ -10,7 +10,7 @@ use super::keywords::Keyword;
 use super::lrobject::LrObject;
 
 /// Keyword tree
-/// Operate as a hash multimap of parent -> Vec<child>
+/// Operate as a hash multimap of parent -> `Vec<child>`
 #[derive(Default)]
 pub struct KeywordTree {
     // HashMap. Key is the parent id. Values: the children ids.

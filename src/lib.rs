@@ -21,14 +21,14 @@ mod lrobject;
 pub mod lron;
 
 /// Point
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
 }
 
 /// Aspect ratio.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AspectRatio {
     pub width: i32,
     pub height: i32,
@@ -36,7 +36,7 @@ pub struct AspectRatio {
 
 /// Rectangle. Lr uses 0..1.0 for
 /// crops rectangles.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Rect {
     pub top: f64,
     pub bottom: f64,
