@@ -31,7 +31,7 @@ impl KeywordTree {
     }
 
     fn add_child(&mut self, keyword: &Keyword) {
-        self.map.entry(keyword.parent).or_insert_with(Vec::new);
+        self.map.entry(keyword.parent).or_default();
         self.map
             .get_mut(&keyword.parent)
             .unwrap()
