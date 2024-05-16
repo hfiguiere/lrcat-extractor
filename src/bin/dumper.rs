@@ -54,6 +54,9 @@ struct CommandArgs {
 struct ListArgs {
     /// The catalog
     path: PathBuf,
+    /// Sort
+    #[arg(short)]
+    sort: bool,
 }
 
 fn main() {
@@ -72,21 +75,31 @@ fn process_list(args: &ListArgs) {
         let folders = catalog.load_folders();
 
         let roots = BTreeMap::from_iter(
-            folders.roots.iter().map(|folder| (folder.id(), folder.clone()))
+            folders
+                .roots
+                .iter()
+                .map(|folder| (folder.id(), folder.clone())),
         );
-        for folder in &folders.folders {
-            let root_path = if let Some(root) = roots.get(&folder.root_folder) {
-                &root.absolute_path
-            } else {
-                ""
-            };
 
-            println!(
-                "{}{}",
-                root_path,
-                &folder.path_from_root,
-            );
+        let mut resolved_folders = folders
+            .folders
+            .iter()
+            .map(|folder| {
+                let root_path = if let Some(root) = roots.get(&folder.root_folder) {
+                    &root.absolute_path
+                } else {
+                    ""
+                };
+
+                format!("{}{}", root_path, &folder.path_from_root,)
+            })
+            .collect::<Vec<String>>();
+        if args.sort {
+            resolved_folders.sort_unstable();
         }
+        resolved_folders
+            .iter()
+            .for_each(|folder| println!("{}", folder));
     }
 }
 
