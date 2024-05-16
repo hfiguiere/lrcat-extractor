@@ -7,6 +7,7 @@
 extern crate lrcat;
 
 use std::collections::BTreeMap;
+use std::iter::FromIterator;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
@@ -24,6 +25,8 @@ struct Args {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// List content of the catalog.
+    List(ListArgs),
     Dump(CommandArgs),
     Audit(CommandArgs),
 }
@@ -47,13 +50,44 @@ struct CommandArgs {
     keywords: bool,
 }
 
+#[derive(Debug, Parser)]
+struct ListArgs {
+    /// The catalog
+    path: PathBuf,
+}
+
 fn main() {
     let args = Args::parse();
 
     match args.command {
+        Command::List(ref args) => process_list(args),
         Command::Dump(_) => process_dump(&args),
         Command::Audit(_) => process_audit(&args),
     };
+}
+
+fn process_list(args: &ListArgs) {
+    let mut catalog = Catalog::new(&args.path);
+    if catalog.open() {
+        let folders = catalog.load_folders();
+
+        let roots = BTreeMap::from_iter(
+            folders.roots.iter().map(|folder| (folder.id(), folder.clone()))
+        );
+        for folder in &folders.folders {
+            let root_path = if let Some(root) = roots.get(&folder.root_folder) {
+                &root.absolute_path
+            } else {
+                ""
+            };
+
+            println!(
+                "{}{}",
+                root_path,
+                &folder.path_from_root,
+            );
+        }
+    }
 }
 
 fn process_dump(args: &Args) {

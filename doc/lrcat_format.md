@@ -74,7 +74,7 @@ AgLibraryFolder: folder. Attached to a root folder.
 
 * id_local: local id
 * id_global: uuid
-* pathFromRoot: path from the root folder.
+* pathFromRoot: path from the root folder. Can be `NULL`.
 * rootFolder: id of the root folder.
 
 There is always a folder with an empty `pathFromRoot` for a root
