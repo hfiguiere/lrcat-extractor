@@ -57,6 +57,9 @@ struct ListArgs {
     /// Sort
     #[arg(short)]
     sort: bool,
+    /// Only list directories
+    #[arg(short)]
+    dirs: bool,
 }
 
 fn main() {
@@ -67,6 +70,41 @@ fn main() {
         Command::Dump(_) => process_dump(&args),
         Command::Audit(_) => process_audit(&args),
     };
+}
+
+fn list_dirs(folders: &BTreeMap<LrId, String>, sort: bool) {
+    let mut folders = folders.values().collect::<Vec<&String>>();
+    if sort {
+        folders.sort_unstable();
+    }
+    folders.iter().for_each(|folder| println!("{}", folder));
+}
+
+fn list_files(catalog: &mut Catalog, folders: &BTreeMap<LrId, String>, sort: bool) {
+    let libfiles = catalog.load_library_files();
+    let mut files = libfiles
+        .iter()
+        .filter_map(|file| {
+            folders.get(&file.folder).map(|folder| {
+                let mut out = vec![format!("{}{}.{}", folder, file.basename, file.extension)];
+                out.extend(file.sidecar_extensions.split(',').filter_map(|ext| {
+                    if !ext.is_empty() {
+                        Some(format!("{}{}.{}", folder, file.basename, ext))
+                    } else {
+                        None
+                    }
+                }));
+
+                out
+            })
+        })
+        .flatten()
+        .collect::<Vec<String>>();
+
+    if sort {
+        files.sort_unstable();
+    }
+    files.iter().for_each(|file| println!("{}", file));
 }
 
 fn process_list(args: &ListArgs) {
@@ -81,25 +119,25 @@ fn process_list(args: &ListArgs) {
                 .map(|folder| (folder.id(), folder.clone())),
         );
 
-        let mut resolved_folders = folders
-            .folders
-            .iter()
-            .map(|folder| {
-                let root_path = if let Some(root) = roots.get(&folder.root_folder) {
-                    &root.absolute_path
-                } else {
-                    ""
-                };
+        println!("len {}", folders.folders.len());
+        let resolved_folders = BTreeMap::from_iter(folders.folders.iter().map(|folder| {
+            let root_path = if let Some(root) = roots.get(&folder.root_folder) {
+                &root.absolute_path
+            } else {
+                ""
+            };
 
-                format!("{}{}", root_path, &folder.path_from_root,)
-            })
-            .collect::<Vec<String>>();
-        if args.sort {
-            resolved_folders.sort_unstable();
+            (
+                folder.id(),
+                format!("{}{}", root_path, &folder.path_from_root),
+            )
+        }));
+        println!("len {}", resolved_folders.len());
+        if args.dirs {
+            list_dirs(&resolved_folders, args.sort);
+        } else {
+            list_files(&mut catalog, &resolved_folders, args.sort);
         }
-        resolved_folders
-            .iter()
-            .for_each(|folder| println!("{}", folder));
     }
 }
 
