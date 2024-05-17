@@ -47,6 +47,9 @@ pub struct Rect {
 /// Error from the crate, agreggate with sqlite errors.
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("Unimplemented")]
+    /// Unimplemented
+    Unimplemented,
     #[error("LrCat: Skip.")]
     /// Skip the item (when reading from Db)
     Skip,

@@ -62,14 +62,14 @@ struct ListArgs {
     dirs: bool,
 }
 
-fn main() {
+fn main() -> lrcat::Result<()> {
     let args = Args::parse();
 
     match args.command {
         Command::List(ref args) => process_list(args),
         Command::Dump(_) => process_dump(&args),
         Command::Audit(_) => process_audit(&args),
-    };
+    }
 }
 
 fn list_dirs(folders: &BTreeMap<LrId, String>, sort: bool) {
@@ -107,98 +107,100 @@ fn list_files(catalog: &mut Catalog, folders: &BTreeMap<LrId, String>, sort: boo
     files.iter().for_each(|file| println!("{}", file));
 }
 
-fn process_list(args: &ListArgs) {
+fn process_list(args: &ListArgs) -> lrcat::Result<()> {
     let mut catalog = Catalog::new(&args.path);
-    if catalog.open() {
-        let folders = catalog.load_folders();
+    catalog.open()?;
+    let folders = catalog.load_folders();
 
-        let roots = BTreeMap::from_iter(
-            folders
-                .roots
-                .iter()
-                .map(|folder| (folder.id(), folder.clone())),
-        );
+    let roots = BTreeMap::from_iter(
+        folders
+            .roots
+            .iter()
+            .map(|folder| (folder.id(), folder.clone())),
+    );
 
-        println!("len {}", folders.folders.len());
-        let resolved_folders = BTreeMap::from_iter(folders.folders.iter().map(|folder| {
-            let root_path = if let Some(root) = roots.get(&folder.root_folder) {
-                &root.absolute_path
-            } else {
-                ""
-            };
-
-            (
-                folder.id(),
-                format!("{}{}", root_path, &folder.path_from_root),
-            )
-        }));
-        println!("len {}", resolved_folders.len());
-        if args.dirs {
-            list_dirs(&resolved_folders, args.sort);
+    println!("len {}", folders.folders.len());
+    let resolved_folders = BTreeMap::from_iter(folders.folders.iter().map(|folder| {
+        let root_path = if let Some(root) = roots.get(&folder.root_folder) {
+            &root.absolute_path
         } else {
-            list_files(&mut catalog, &resolved_folders, args.sort);
-        }
+            ""
+        };
+
+        (
+            folder.id(),
+            format!("{}{}", root_path, &folder.path_from_root),
+        )
+    }));
+    println!("len {}", resolved_folders.len());
+    if args.dirs {
+        list_dirs(&resolved_folders, args.sort);
+    } else {
+        list_files(&mut catalog, &resolved_folders, args.sort);
     }
+
+    Ok(())
 }
 
-fn process_dump(args: &Args) {
+fn process_dump(args: &Args) -> lrcat::Result<()> {
     if let Command::Dump(args) = &args.command {
         let mut catalog = Catalog::new(&args.path);
-        if catalog.open() {
-            catalog.load_version();
-            println!("Catalog:");
-            println!(
-                "\tVersion: {} ({:?})",
-                catalog.version, catalog.catalog_version
-            );
-            println!("\tRoot keyword id: {}", catalog.root_keyword_id);
+        catalog.open()?;
 
-            if !catalog.catalog_version.is_supported() {
-                println!("Unsupported catalog version");
-                return;
-            }
+        catalog.load_version();
+        println!("Catalog:");
+        println!(
+            "\tVersion: {} ({:?})",
+            catalog.version, catalog.catalog_version
+        );
+        println!("\tRoot keyword id: {}", catalog.root_keyword_id);
 
-            {
-                let root_keyword_id = catalog.root_keyword_id;
-                let keywordtree = catalog.load_keywords_tree();
-                let keywords = catalog.load_keywords();
-                println!("\tKeywords count: {}", keywords.len());
+        if !catalog.catalog_version.is_supported() {
+            println!("Unsupported catalog version");
+            return Err(lrcat::Error::UnsupportedVersion);
+        }
 
-                if args.all || args.keywords {
-                    dump_keywords(root_keyword_id, keywords, &keywordtree);
-                }
-            }
+        {
+            let root_keyword_id = catalog.root_keyword_id;
+            let keywordtree = catalog.load_keywords_tree();
+            let keywords = catalog.load_keywords();
+            println!("\tKeywords count: {}", keywords.len());
 
-            {
-                let folders = catalog.load_folders();
-                if args.all || args.root {
-                    dump_root_folders(folders);
-                }
-                if args.all || args.folders {
-                    dump_folders(folders);
-                }
+            if args.all || args.keywords {
+                dump_keywords(root_keyword_id, keywords, &keywordtree);
             }
+        }
 
-            {
-                let libfiles = catalog.load_library_files();
-                if args.all || args.libfiles {
-                    dump_libfiles(libfiles);
-                }
+        {
+            let folders = catalog.load_folders();
+            if args.all || args.root {
+                dump_root_folders(folders);
             }
-            {
-                let images = catalog.load_images();
-                if args.all || args.images {
-                    dump_images(images);
-                }
+            if args.all || args.folders {
+                dump_folders(folders);
             }
-            {
-                let collections = catalog.load_collections();
-                if args.all || args.collections {
-                    dump_collections(collections);
-                }
+        }
+
+        {
+            let libfiles = catalog.load_library_files();
+            if args.all || args.libfiles {
+                dump_libfiles(libfiles);
+            }
+        }
+        {
+            let images = catalog.load_images();
+            if args.all || args.images {
+                dump_images(images);
+            }
+        }
+        {
+            let collections = catalog.load_collections();
+            if args.all || args.collections {
+                dump_collections(collections);
             }
         }
     }
+    Ok(())
 }
 
 fn print_keyword(level: i32, id: LrId, keywords: &BTreeMap<i64, Keyword>, tree: &KeywordTree) {
@@ -338,4 +340,6 @@ fn dump_collections(collections: &[Collection]) {
     println!("+---------+--------------------------------------+---------+-------+----------------------");
 }
 
-fn process_audit(_: &Args) {}
+fn process_audit(_: &Args) -> lrcat::Result<()> {
+    Err(lrcat::Error::Unimplemented)
+}

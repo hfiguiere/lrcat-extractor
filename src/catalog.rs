@@ -94,15 +94,12 @@ impl Catalog {
 
     /// Open catalog. Return false in failure.
     /// This doesn't check if the content is valid beyond the backing sqlite3.
-    pub fn open(&mut self) -> bool {
-        let conn_attempt = Connection::open(&self.path);
-        if let Ok(conn) = conn_attempt {
-            self.dbconn = Some(conn);
+    pub fn open(&mut self) -> crate::Result<()> {
+        let conn = Connection::open(&self.path)?;
 
-            return true;
-        }
+        self.dbconn = Some(conn);
 
-        false
+        Ok(())
     }
 
     /// Get a variable from the table.
