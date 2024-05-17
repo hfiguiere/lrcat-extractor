@@ -27,25 +27,35 @@ struct Args {
 enum Command {
     /// List content of the catalog.
     List(ListArgs),
+    /// Dump the catalog.
     Dump(CommandArgs),
+    /// Audit (unimplemented).
     Audit(CommandArgs),
 }
 
 #[derive(Debug, Parser)]
 struct CommandArgs {
+    /// Path to the catalog.
     path: PathBuf,
+    /// Dump everything.
     #[arg(long)]
     all: bool,
+    /// Dump collections.
     #[arg(long)]
     collections: bool,
+    /// Dump library files.
     #[arg(long)]
     libfiles: bool,
+    /// Dump images.
     #[arg(long)]
     images: bool,
+    /// Dump folders.
     #[arg(long)]
     folders: bool,
+    /// Dump root folders.
     #[arg(long)]
     root: bool,
+    /// Dump keywords.
     #[arg(long)]
     keywords: bool,
 }
@@ -119,7 +129,6 @@ fn process_list(args: &ListArgs) -> lrcat::Result<()> {
             .map(|folder| (folder.id(), folder.clone())),
     );
 
-    println!("len {}", folders.folders.len());
     let resolved_folders = BTreeMap::from_iter(folders.folders.iter().map(|folder| {
         let root_path = if let Some(root) = roots.get(&folder.root_folder) {
             &root.absolute_path
@@ -132,7 +141,7 @@ fn process_list(args: &ListArgs) -> lrcat::Result<()> {
             format!("{}{}", root_path, &folder.path_from_root),
         )
     }));
-    println!("len {}", resolved_folders.len());
+
     if args.dirs {
         list_dirs(&resolved_folders, args.sort);
     } else {
