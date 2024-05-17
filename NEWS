@@ -1,3 +1,9 @@
+0.5.0 -
+
+- dumper: Added `list` command.
+- API: use `thiserror`.
+- API: Catalog::open() returns a Result<> now.
+
 0.4.1 - 2 September 2023
 
 - Support escaped strings: lots of case where the value is a string
