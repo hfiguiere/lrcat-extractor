@@ -12,7 +12,7 @@ documentation = "https://docs.rs/lrcat-extractor/"
 chrono = "0.4.0"
 peg = "0.8.3"
 rusqlite = { version = "0.31.0" }
-thiserror = "1.0.47"
+thiserror = "2"
 
 clap = { version = "^4.5", optional = true, features = ["derive"] }
 
