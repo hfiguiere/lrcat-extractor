@@ -117,14 +117,10 @@ impl Catalog {
         None
     }
 
-    /// Pare the version string from the database.
+    /// Parse the version string from the database.
     fn parse_version(mut v: String) -> i32 {
         v.truncate(2);
-        if let Ok(version) = v.parse::<i32>() {
-            version
-        } else {
-            0
-        }
+        v.parse::<i32>().unwrap_or_default()
     }
 
     /// Load version info for the catalog.
@@ -155,7 +151,7 @@ impl Catalog {
         );
         let where_join = T::read_join_where(catalog_version);
         if !where_join.is_empty() {
-            query += &format!(" WHERE {}", where_join);
+            query += &format!(" WHERE {where_join}");
         }
         if let Ok(mut stmt) = conn.prepare(&query) {
             if let Ok(rows) =

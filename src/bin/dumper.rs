@@ -87,7 +87,7 @@ fn list_dirs(folders: &BTreeMap<LrId, String>, sort: bool) {
     if sort {
         folders.sort_unstable();
     }
-    folders.iter().for_each(|folder| println!("{}", folder));
+    folders.iter().for_each(|folder| println!("{folder}"));
 }
 
 fn list_files(catalog: &mut Catalog, folders: &BTreeMap<LrId, String>, sort: bool) {
@@ -96,10 +96,10 @@ fn list_files(catalog: &mut Catalog, folders: &BTreeMap<LrId, String>, sort: boo
         .iter()
         .filter_map(|file| {
             folders.get(&file.folder).map(|folder| {
-                let mut out = vec![format!("{}{}.{}", folder, file.basename, file.extension)];
+                let mut out = vec![format!("{folder}{}.{}", file.basename, file.extension)];
                 out.extend(file.sidecar_extensions.split(',').filter_map(|ext| {
                     if !ext.is_empty() {
-                        Some(format!("{}{}.{}", folder, file.basename, ext))
+                        Some(format!("{folder}{}.{ext}", file.basename))
                     } else {
                         None
                     }
@@ -114,7 +114,7 @@ fn list_files(catalog: &mut Catalog, folders: &BTreeMap<LrId, String>, sort: boo
     if sort {
         files.sort_unstable();
     }
-    files.iter().for_each(|file| println!("{}", file));
+    files.iter().for_each(|file| println!("{file}"));
 }
 
 fn process_list(args: &ListArgs) -> lrcat::Result<()> {

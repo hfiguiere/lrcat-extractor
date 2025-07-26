@@ -38,28 +38,28 @@ impl fmt::Debug for Content {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut empty: bool = true;
         if let Some(ref filter) = self.filter {
-            write!(f, "filter: {:?}", filter)?;
+            write!(f, "filter: {filter:?}")?;
             empty = false;
         }
         if let Some(ref sort_type) = self.sort_type {
             if !empty {
                 write!(f, ", ")?;
             }
-            write!(f, "sort: {:?}", sort_type)?;
+            write!(f, "sort: {sort_type:?}")?;
             empty = false;
         }
         if let Some(ref direction) = self.sort_direction {
             if !empty {
                 write!(f, ", ")?;
             }
-            write!(f, "direction: {:?}", direction)?;
+            write!(f, "direction: {direction:?}")?;
             empty = false;
         }
         if let Some(ref smart_coll) = self.smart_collection {
             if !empty {
                 write!(f, ", ")?;
             }
-            write!(f, "smart_collection: {:?}", smart_coll)?;
+            write!(f, "smart_collection: {smart_coll:?}")?;
         }
         Ok(())
     }
@@ -74,10 +74,7 @@ impl Content {
     ) -> Content {
         let mut content = Content::default();
 
-        let query = format!(
-            "SELECT content,owningModule from {} where {}=?1",
-            table, container_col
-        );
+        let query = format!("SELECT content, owningModule from {table} where {container_col}=?1",);
         if let Ok(mut stmt) = conn.prepare(&query) {
             let mut rows = stmt.query([&container_id]).unwrap();
             while let Ok(Some(row)) = rows.next() {
