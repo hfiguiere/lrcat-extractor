@@ -1,10 +1,11 @@
-0.5.0 -
+0.5.0 - 26 July 2025
 
 - dumper: Use clap instead of docopt.
 - dumper: Added `list` command.
 - clap is only build optionally.
 - API: use `thiserror`.
 - API: Catalog::open() returns a Result<> now.
+- Update rusqlite to 0.37
 
 0.4.1 - 2 September 2023
 
